@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CubeSigner Google Login Test</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        margin: 0;
+        padding: 2rem;
+        background: #f5f5f5;
+        color: #1a1a1a;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+        margin: 0 0 0.5rem;
+      }
+
+      .subtitle {
+        color: #666;
+        font-size: 0.875rem;
+        margin: 0 0 2rem;
+      }
+
+      .card {
+        background: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+      }
+
+      .card h2 {
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #666;
+        margin: 0 0 1rem;
+      }
+
+      .form-row {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-bottom: 0.75rem;
+      }
+
+      .form-row:last-child {
+        margin-bottom: 0;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        flex: 1;
+        min-width: 200px;
+      }
+
+      .form-group label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #555;
+      }
+
+      .form-group input,
+      .form-group select {
+        padding: 0.5rem 0.75rem;
+        border: 1px solid #d0d0d0;
+        border-radius: 4px;
+        font-size: 0.875rem;
+        font-family: inherit;
+      }
+
+      .form-group textarea {
+        min-height: 84px;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid #d0d0d0;
+        border-radius: 4px;
+        font-size: 0.875rem;
+        font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace;
+        resize: vertical;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: #4285f4;
+        box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.15);
+      }
+
+      .button-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      button {
+        border: 1px solid #d0d0d0;
+        background: #fff;
+        color: #1a1a1a;
+        border-radius: 6px;
+        font-size: 0.8125rem;
+        line-height: 1;
+        padding: 0.6rem 0.8rem;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #f8f8f8;
+      }
+
+      button:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+
+      button.danger {
+        border-color: #f2b8b5;
+        color: #a61b15;
+      }
+
+      #session-status {
+        font-size: 0.8125rem;
+        line-height: 1.5;
+        color: #444;
+      }
+
+      #keys-output {
+        margin-top: 0.75rem;
+        padding: 0.75rem;
+        border-radius: 6px;
+        background: #fafafa;
+        border: 1px solid #efefef;
+        max-height: 240px;
+        overflow: auto;
+        font-size: 0.75rem;
+        font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      #google-signin-btn {
+        min-height: 44px;
+      }
+
+      #log {
+        font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace;
+        font-size: 0.8125rem;
+        line-height: 1.5;
+        max-height: 500px;
+        overflow-y: auto;
+        padding: 0;
+      }
+
+      #log:empty::after {
+        content: "Waiting for Google Sign-In...";
+        color: #999;
+        font-style: italic;
+      }
+
+      .log-entry {
+        padding: 0.25rem 0;
+        border-bottom: 1px solid #f0f0f0;
+        word-break: break-all;
+      }
+
+      .log-entry:last-child {
+        border-bottom: none;
+      }
+
+      .log-info {
+        color: #555;
+      }
+
+      .log-success {
+        color: #1b7a2b;
+      }
+
+      .log-error {
+        color: #c0392b;
+      }
+
+      .log-json {
+        color: #333;
+      }
+
+      .log-label {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+      }
+
+      .log-json pre {
+        margin: 0;
+        padding: 0.5rem;
+        background: #f8f9fa;
+        border-radius: 4px;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>CubeSigner Google Login Test</h1>
+    <p class="subtitle">Verify Google OIDC -&gt; CubeSigner session exchange</p>
+
+    <div class="card">
+      <h2>Configuration</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="orgId">CubeSigner Org ID</label>
+          <input type="text" id="orgId" placeholder="Org#..." spellcheck="false" />
+        </div>
+        <div class="form-group">
+          <label for="env">Environment</label>
+          <select id="env">
+            <option value="gamma" selected>Gamma (staging)</option>
+            <option value="prod">Production</option>
+            <option value="beta">Beta</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="googleClientId">Google Client ID</label>
+          <input type="text" id="googleClientId" placeholder="xxx.apps.googleusercontent.com" spellcheck="false" />
+        </div>
+        <div class="form-group">
+          <label for="scopes">Scopes (comma-separated)</label>
+          <input type="text" id="scopes" placeholder="sign:*,manage:*,export:*" spellcheck="false" />
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Google Sign-In</h2>
+      <div id="google-signin-btn"></div>
+    </div>
+
+    <div class="card">
+      <h2>Session State</h2>
+      <div id="session-status">Not authenticated.</div>
+      <div class="button-row" style="margin-top: 0.75rem">
+        <button id="action-get-user">Get Current User</button>
+        <button id="action-list-keys">List Accessible Keys / Shares</button>
+      </div>
+      <pre id="keys-output"></pre>
+    </div>
+
+    <div class="card">
+      <h2>Key / Share Controls</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="keyId">Active Key ID</label>
+          <input type="text" id="keyId" placeholder="Key#..." spellcheck="false" />
+        </div>
+      </div>
+      <div class="button-row">
+        <button id="action-get-key">Get Key Details</button>
+        <button id="action-get-metadata">Get Metadata</button>
+        <button id="action-disable-key" class="danger">Disable Key</button>
+        <button id="action-delete-key" class="danger">Delete Key</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Metadata Operations</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="metadataPayload">Metadata Payload (JSON or plain string)</label>
+          <textarea id="metadataPayload" spellcheck="false" placeholder='{"recoveryCommitment":"..."}'></textarea>
+        </div>
+      </div>
+      <div class="button-row">
+        <button id="action-set-metadata">Set Metadata</button>
+        <button id="action-clear-metadata">Clear Metadata</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Import Raw Share</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="importKeyType">Key Type</label>
+          <select id="importKeyType">
+            <option value="SecpEthAddr" selected>SecpEthAddr</option>
+            <option value="SecpBtc">SecpBtc</option>
+            <option value="Ed25519SolanaAddr">Ed25519SolanaAddr</option>
+            <option value="P256CosmosAddr">P256CosmosAddr</option>
+            <option value="Stark">Stark</option>
+            <option value="BabyJubjub">BabyJubjub</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="importSecretHex">Raw Secret (hex)</label>
+          <input type="text" id="importSecretHex" placeholder="0x..." spellcheck="false" />
+        </div>
+      </div>
+      <div class="button-row">
+        <button id="action-import-secret">Import Raw Secret</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Export Operations</h2>
+      <div class="button-row">
+        <button id="action-init-export">Init Export</button>
+        <button id="action-get-export-status">Get Export Status</button>
+        <button id="action-complete-export">Complete Export + Decrypt</button>
+        <button id="action-cancel-export" class="danger">Cancel Export</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Output</h2>
+      <div id="log"></div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

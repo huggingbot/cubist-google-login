@@ -1,0 +1,24 @@
+{
+  "name": "test-google-login-pages",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 3000",
+    "build": "tsc && vite build",
+    "build:pages": "VITE_BASE_PATH=/${PAGES_REPO:-test-google-login-pages}/ tsc && vite build",
+    "preview": "vite preview --port 4173"
+  },
+  "dependencies": {
+    "@cubist-labs/cubesigner-sdk": "^0.4.217",
+    "@cubist-labs/cubesigner-sdk-key-import": "^0.4.217",
+    "@hpke/common": "^1.8.1",
+    "@hpke/core": "^1.7.5"
+  },
+  "devDependencies": {
+    "@types/node": "^25.2.3",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1"
+  },
+  "packageManager": "yarn@3.8.7+sha512.bbe7e310ff7fd20dc63b111110f96fe18192234bb0d4f10441fa6b85d2b644c8923db8fbe6d7886257ace948440ab1f83325ad02af457a1806cdc97f03d2508e"
+}
