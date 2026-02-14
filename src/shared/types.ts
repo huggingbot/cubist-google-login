@@ -48,6 +48,8 @@ export type DomRefs = {
   getExportStatusButton: HTMLButtonElement;
   completeExportButton: HTMLButtonElement;
   cancelExportButton: HTMLButtonElement;
+  manualTokenInput: HTMLTextAreaElement;
+  manualTokenLoginButton: HTMLButtonElement;
 };
 
 export type KeySummary = {

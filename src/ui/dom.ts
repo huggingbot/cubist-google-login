@@ -36,6 +36,8 @@ export const dom: DomRefs = {
   getExportStatusButton: elementById<HTMLButtonElement>('action-get-export-status'),
   completeExportButton: elementById<HTMLButtonElement>('action-complete-export'),
   cancelExportButton: elementById<HTMLButtonElement>('action-cancel-export'),
+  manualTokenInput: elementById<HTMLTextAreaElement>('manualToken'),
+  manualTokenLoginButton: elementById<HTMLButtonElement>('action-manual-token-login'),
 };
 
 export const actionButtons: HTMLButtonElement[] = [

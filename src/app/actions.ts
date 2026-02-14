@@ -32,6 +32,7 @@ export type AppActions = {
   handleGoogleLogin: (
     credentialResponse: GoogleCredentialResponse,
   ) => Promise<void>;
+  manualTokenLoginAction: () => Promise<void>;
   getCurrentUserAction: () => Promise<void>;
   listKeysAction: () => Promise<void>;
   getKeyAction: () => Promise<void>;
@@ -90,6 +91,31 @@ const handleGoogleLogin = async (
   const idToken = credentialResponse.credential;
   appendLog('Google sign-in succeeded. Decoding token...');
 
+  const payload = decodeJwtPayload(idToken);
+  appendLogJson('Google ID Token Payload', {
+    iss: payload.iss,
+    sub: payload.sub,
+    email: payload.email,
+    name: payload.name,
+    aud: payload.aud,
+    iat: payload.iat,
+    exp: payload.exp,
+  });
+
+  appendLog('Raw ID Token (copy this to use on another origin):');
+  appendLog(idToken);
+
+  await signInWithGoogleToken(idToken);
+};
+
+const manualTokenLoginAction = async (): Promise<void> => {
+  clearLog();
+  const idToken = dom.manualTokenInput.value.trim();
+  if (!idToken) {
+    throw new Error('Paste a Google ID token (JWT) first.');
+  }
+
+  appendLog('Using manually pasted token. Decoding...');
   const payload = decodeJwtPayload(idToken);
   appendLogJson('Google ID Token Payload', {
     iss: payload.iss,
@@ -249,6 +275,7 @@ const cancelExportAction = async (): Promise<void> => {
 export const createActions = (): AppActions => {
   return {
     handleGoogleLogin,
+    manualTokenLoginAction,
     getCurrentUserAction,
     listKeysAction,
     getKeyAction,

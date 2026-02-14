@@ -249,6 +249,22 @@
     </div>
 
     <div class="card">
+      <h2>Manual Token Login</h2>
+      <p style="margin: 0 0 0.5rem; font-size: 0.85rem; opacity: 0.7;">
+        Paste a Google ID token (JWT) obtained from another origin to create a CubeSigner session directly.
+      </p>
+      <div class="form-row">
+        <div class="form-group" style="flex: 1;">
+          <label for="manualToken">Google ID Token (JWT)</label>
+          <textarea id="manualToken" rows="3" placeholder="eyJhbGciOiJSUzI1NiIs..." spellcheck="false" style="font-family: monospace; font-size: 0.8rem;"></textarea>
+        </div>
+      </div>
+      <div class="button-row">
+        <button id="action-manual-token-login">Login with Pasted Token</button>
+      </div>
+    </div>
+
+    <div class="card">
       <h2>Session State</h2>
       <div id="session-status">Not authenticated.</div>
       <div class="button-row" style="margin-top: 0.75rem">

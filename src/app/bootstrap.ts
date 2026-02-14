@@ -87,6 +87,11 @@ const initializeApp = (): void => {
   wireConfigListeners(rerenderGoogleButton);
 
   bindAsyncAction(
+    dom.manualTokenLoginButton,
+    'Manual token login',
+    actions.manualTokenLoginAction,
+  );
+  bindAsyncAction(
     dom.getUserButton,
     'Get user profile',
     actions.getCurrentUserAction,
