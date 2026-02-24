@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --port 3000",
+    "dev": "vite --port 3010",
     "build": "tsc && vite build",
     "build:pages": "VITE_BASE_PATH=/${PAGES_REPO:-test-google-login-pages}/ tsc && vite build",
     "preview": "vite preview --port 4173"

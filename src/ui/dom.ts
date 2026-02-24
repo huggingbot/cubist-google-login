@@ -35,8 +35,12 @@ export const dom: DomRefs = {
   getExportStatusButton: elementById<HTMLButtonElement>('action-get-export-status'),
   completeExportButton: elementById<HTMLButtonElement>('action-complete-export'),
   cancelExportButton: elementById<HTMLButtonElement>('action-cancel-export'),
-  manualTokenInput: elementById<HTMLTextAreaElement>('manualToken'),
-  manualTokenLoginButton: elementById<HTMLButtonElement>('action-manual-token-login'),
+  manualIdentityProofInput: elementById<HTMLTextAreaElement>(
+    'manualIdentityProof',
+  ),
+  manualIdentityProofSubmitButton: elementById<HTMLButtonElement>(
+    'action-manual-identity-proof-submit',
+  ),
 };
 
 export const actionButtons: HTMLButtonElement[] = [

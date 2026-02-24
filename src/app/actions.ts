@@ -17,6 +17,7 @@ import {
 } from '../services/cubesigner';
 import {
   ensureProviderUserFromIdentityProof,
+  parseIdentityProofJson,
   registrationEnsureUserUrl,
 } from '../services/registration';
 import type { GoogleCredentialResponse } from '../shared/types';
@@ -38,7 +39,7 @@ export type AppActions = {
   handleGoogleLogin: (
     credentialResponse: GoogleCredentialResponse,
   ) => Promise<void>;
-  manualTokenLoginAction: () => Promise<void>;
+  submitManualIdentityProofAction: () => Promise<void>;
   getCurrentUserAction: () => Promise<void>;
   listKeysAction: () => Promise<void>;
   getKeyAction: () => Promise<void>;
@@ -136,26 +137,20 @@ const handleGoogleLogin = async (
   await signInWithGoogleToken(idToken);
 };
 
-const manualTokenLoginAction = async (): Promise<void> => {
+const submitManualIdentityProofAction = async (): Promise<void> => {
   clearLog();
-  const idToken = dom.manualTokenInput.value.trim();
-  if (!idToken) {
-    throw new Error('Paste a Google ID token (JWT) first.');
-  }
+  appendLog('Using manually pasted identity proof JSON...');
 
-  appendLog('Using manually pasted token. Decoding...');
-  const payload = decodeJwtPayload(idToken);
-  appendLogJson('Google ID Token Payload', {
-    iss: payload.iss,
-    sub: payload.sub,
-    email: payload.email,
-    name: payload.name,
-    aud: payload.aud,
-    iat: payload.iat,
-    exp: payload.exp,
-  });
+  const identityProof = parseIdentityProofJson(dom.manualIdentityProofInput.value);
+  appendLogJson('Identity Proof', identityProof);
 
-  await signInWithGoogleToken(idToken);
+  appendLog(
+    `Forwarding identity proof to registration service (${registrationEnsureUserUrl()})...`,
+  );
+  const registrationResponse =
+    await ensureProviderUserFromIdentityProof(identityProof);
+  appendLog('Registration service confirmed user provisioning.', 'success');
+  appendLogJson('Registration Service Response', registrationResponse);
 };
 
 const getCurrentUserAction = async (): Promise<void> => {
@@ -303,7 +298,7 @@ const cancelExportAction = async (): Promise<void> => {
 export const createActions = (): AppActions => {
   return {
     handleGoogleLogin,
-    manualTokenLoginAction,
+    submitManualIdentityProofAction,
     getCurrentUserAction,
     listKeysAction,
     getKeyAction,

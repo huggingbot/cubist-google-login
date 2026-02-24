@@ -37,7 +37,8 @@ cp .env.example .env.local   # then fill in your values
 yarn dev
 ```
 
-Open `http://localhost:3000`.
+Open `http://localhost:3010`.
+(`3010` is used so local registration service can run on `3000`.)
 
 ### Environment variables
 
@@ -58,7 +59,7 @@ Registration service settings are hardcoded to match
 
 - **Path**: `/recovery/registration/ensure-user`
 - **Provider verifier**: `cubist`
-- **Base URL**: `https://recovery-registration.dev-api.cx.metamask.io`
+- **Base URL**: `http://localhost:3000`
 
 ## Required config in UI
 
@@ -75,6 +76,9 @@ When you click Google Sign-In, the app:
 5. forwards the proof to the registration service (`ensure-user`) so the backend can create/confirm the user,
 6. calls `CubeSignerClient.createOidcSession(...)` with the same ID token,
 7. creates a CubeSigner client session and enables key/share actions.
+
+If you already have an identity proof JSON, use **Manual Identity Proof Forward**
+to submit it directly to the local registration service without running Google login.
 
 ## GitHub Pages build
 

@@ -247,18 +247,18 @@
     </div>
 
     <div class="card">
-      <h2>Manual Token Login</h2>
+      <h2>Manual Identity Proof</h2>
       <p style="margin: 0 0 0.5rem; font-size: 0.85rem; opacity: 0.7;">
-        Paste a Google ID token (JWT) obtained from another origin to generate identity proof, call registration service, and then create a CubeSigner session.
+        Paste an identity proof JSON.
       </p>
       <div class="form-row">
         <div class="form-group" style="flex: 1;">
-          <label for="manualToken">Google ID Token (JWT)</label>
-          <textarea id="manualToken" rows="3" placeholder="eyJhbGciOiJSUzI1NiIs..." spellcheck="false" style="font-family: monospace; font-size: 0.8rem;"></textarea>
+          <label for="manualIdentityProof">Identity Proof (JSON)</label>
+          <textarea id="manualIdentityProof" rows="6" placeholder='{"identity":{"iss":"https://accounts.google.com","sub":"..."}}' spellcheck="false" style="font-family: monospace; font-size: 0.8rem;"></textarea>
         </div>
       </div>
       <div class="button-row">
-        <button id="action-manual-token-login">Login with Pasted Token</button>
+        <button id="action-manual-identity-proof-submit">Send Identity Proof</button>
       </div>
     </div>
 

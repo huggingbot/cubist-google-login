@@ -18,8 +18,7 @@ export const CUBESIGNER_ENV = envs.gamma;
 export const CUBESIGNER_ENV_NAME = 'gamma';
 export const REGISTRATION_API_PATH = '/recovery/registration/ensure-user';
 export const REGISTRATION_PROVIDER_VERIFIER_ID = 'cubist';
-export const REGISTRATION_API_BASE_URL =
-  'https://recovery-registration.dev-api.cx.metamask.io';
+export const REGISTRATION_API_BASE_URL = 'http://localhost:3000';
 
 export const ALLOWED_IMPORT_KEY_TYPES: CubeSignerKeyType[] = [
   Secp256k1.Evm,
