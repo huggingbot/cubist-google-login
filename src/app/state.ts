@@ -3,7 +3,7 @@ import { actionButtons, dom } from '../ui/dom';
 
 export const appState: AppState = {
   googleIdToken: null,
-  sessionData: null,
+  sessionSummary: null,
   client: null,
 };
 
@@ -18,18 +18,18 @@ export const setActionButtonsState = (enabled: boolean): void => {
 };
 
 export const updateSessionUi = (): void => {
-  if (!appState.sessionData) {
+  if (!appState.sessionSummary) {
     setSessionStatus('Not authenticated.');
     setActionButtonsState(false);
     return;
   }
 
-  const sessionInfo = appState.sessionData.session_info;
+  const sessionInfo = appState.sessionSummary;
   setSessionStatus(
     [
-      `Authenticated to org ${appState.sessionData.org_id}.`,
-      `Session ID: ${sessionInfo.session_id}`,
-      `Auth token exp: ${sessionInfo.auth_token_exp}`,
+      `Authenticated to org ${sessionInfo.orgId}.`,
+      `Session ID: ${sessionInfo.sessionId}`,
+      `Auth token exp: ${sessionInfo.authTokenExp ?? 'unknown'}`,
     ].join(' '),
   );
   setActionButtonsState(true);

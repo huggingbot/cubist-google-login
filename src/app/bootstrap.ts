@@ -88,6 +88,11 @@ const initializeApp = (): void => {
     actions.submitManualIdentityProofAction,
   );
   bindAsyncAction(
+    dom.manualSessionCreateButton,
+    'Manual session exchange',
+    actions.createManualSessionAction,
+  );
+  bindAsyncAction(
     dom.getUserButton,
     'Get user profile',
     actions.getCurrentUserAction,

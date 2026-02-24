@@ -249,7 +249,7 @@
     <div class="card">
       <h2>Manual Identity Proof</h2>
       <p style="margin: 0 0 0.5rem; font-size: 0.85rem; opacity: 0.7;">
-        Paste an identity proof JSON.
+        Paste an identity proof JSON to provision/create the user in registration service.
       </p>
       <div class="form-row">
         <div class="form-group" style="flex: 1;">
@@ -258,7 +258,23 @@
         </div>
       </div>
       <div class="button-row">
-        <button id="action-manual-identity-proof-submit">Send Identity Proof</button>
+        <button id="action-manual-identity-proof-submit">Provision User</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Manual Session Exchange</h2>
+      <p style="margin: 0 0 0.5rem; font-size: 0.85rem; opacity: 0.7;">
+        Paste Google OIDC token to exchange for CubeSigner session via MFA SDK.
+      </p>
+      <div class="form-row">
+        <div class="form-group" style="flex: 1;">
+          <label for="manualSessionToken">OIDC Token</label>
+          <textarea id="manualSessionToken" rows="3" placeholder="eyJhbGciOi..." spellcheck="false" style="font-family: monospace; font-size: 0.8rem;"></textarea>
+        </div>
+      </div>
+      <div class="button-row">
+        <button id="action-manual-session-create">Create Session</button>
       </div>
     </div>
 

@@ -2,7 +2,6 @@ import {
   CubeSignerClient,
   type CubeSignerResponse,
   type KeyType as CubeSignerKeyType,
-  type SessionData,
 } from '@cubist-labs/cubesigner-sdk';
 import {
   CubistProvider,
@@ -10,7 +9,12 @@ import {
 } from '@metamask/mfa-wallet-recovery';
 
 import { ALLOWED_IMPORT_KEY_TYPES, CUBESIGNER_ENV } from '../config/constants';
-import type { AppConfig, AppState, KeySummary } from '../shared/types';
+import type {
+  AppConfig,
+  AppState,
+  KeySummary,
+  SessionSummary,
+} from '../shared/types';
 
 export type OidcIdentityProof = ProviderRegistrationPayload;
 
@@ -30,7 +34,9 @@ const createCubistProvider = (config: AppConfig): CubistProvider => {
 
 export const ensureClientSession = (state: AppState): CubeSignerClient => {
   if (!state.client) {
-    throw new Error('No CubeSigner session. Sign in with Google first.');
+    throw new Error(
+      'No CubeSigner session. Authenticate via Google sign-in or manual proof flow first.',
+    );
   }
   return state.client;
 };
@@ -59,21 +65,25 @@ export const createSessionFromOidcToken = async (
   config: AppConfig,
 ): Promise<{
   client: CubeSignerClient;
-  sessionData: SessionData;
+  sessionSummary: SessionSummary;
 }> => {
-  const selectedEnv = CUBESIGNER_ENV;
-  const oidcResponse = await CubeSignerClient.createOidcSession(
-    selectedEnv,
-    config.orgId,
-    idToken,
-    config.scopes,
-    undefined,
-    undefined,
-    'google login test tool',
-  );
-  const sessionData = assertNoMfaRequired('OIDC login', oidcResponse);
-  const client = await CubeSignerClient.create(sessionData);
-  return { client, sessionData };
+  const { client } = await createCubistProvider(config).authenticate(idToken);
+  const session = (await client.getSession()) as {
+    session_id?: unknown;
+    exp?: unknown;
+  };
+
+  const sessionSummary: SessionSummary = {
+    orgId: config.orgId,
+    sessionId:
+      typeof session.session_id === 'string' && session.session_id.length > 0
+        ? session.session_id
+        : 'unknown',
+    authTokenExp: null,
+    sessionExp: typeof session.exp === 'number' ? session.exp : null,
+  };
+
+  return { client, sessionSummary };
 };
 
 export const mapKeySummary = (key: {

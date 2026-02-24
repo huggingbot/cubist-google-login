@@ -3,7 +3,7 @@
 This app is a browser test harness for:
 
 - Google OIDC sign-in (`id_token`)
-- CubeSigner OIDC session creation
+- CubeSigner OIDC session creation via MFA SDK
 - Key/share operations through CubeSigner SDK
 
 ## Local MetaMask MFA SDK tarballs
@@ -74,11 +74,15 @@ When you click Google Sign-In, the app:
 3. calls `CubistProvider.createCubistIdentityProof(...)` to create an identity proof,
 4. logs the identity proof payload,
 5. forwards the proof to the registration service (`ensure-user`) so the backend can create/confirm the user,
-6. calls `CubeSignerClient.createOidcSession(...)` with the same ID token,
+6. calls `CubistProvider.authenticate(...)` with the same ID token,
 7. creates a CubeSigner client session and enables key/share actions.
 
-If you already have an identity proof JSON, use **Manual Identity Proof Forward**
-to submit it directly to the local registration service without running Google login.
+If you already have an identity proof JSON, use **Manual Identity Proof** to:
+
+1. submit the proof to local registration service (`ensure-user`).
+
+Then use **Manual Session Exchange** to create a CubeSigner session via MFA SDK
+using a Google OIDC token.
 
 ## GitHub Pages build
 

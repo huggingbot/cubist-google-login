@@ -41,6 +41,10 @@ export const dom: DomRefs = {
   manualIdentityProofSubmitButton: elementById<HTMLButtonElement>(
     'action-manual-identity-proof-submit',
   ),
+  manualSessionTokenInput: elementById<HTMLTextAreaElement>('manualSessionToken'),
+  manualSessionCreateButton: elementById<HTMLButtonElement>(
+    'action-manual-session-create',
+  ),
 };
 
 export const actionButtons: HTMLButtonElement[] = [

@@ -3,7 +3,6 @@
 import type {
   CubeSignerClient,
   Scope,
-  SessionData,
 } from '@cubist-labs/cubesigner-sdk';
 
 export type LogLevel = 'info' | 'success' | 'error';
@@ -16,8 +15,15 @@ export type AppConfig = {
 
 export type AppState = {
   googleIdToken: string | null;
-  sessionData: SessionData | null;
+  sessionSummary: SessionSummary | null;
   client: CubeSignerClient | null;
+};
+
+export type SessionSummary = {
+  orgId: string;
+  sessionId: string;
+  authTokenExp: number | null;
+  sessionExp: number | null;
 };
 
 export type DomRefs = {
@@ -47,6 +53,8 @@ export type DomRefs = {
   cancelExportButton: HTMLButtonElement;
   manualIdentityProofInput: HTMLTextAreaElement;
   manualIdentityProofSubmitButton: HTMLButtonElement;
+  manualSessionTokenInput: HTMLTextAreaElement;
+  manualSessionCreateButton: HTMLButtonElement;
 };
 
 export type KeySummary = {

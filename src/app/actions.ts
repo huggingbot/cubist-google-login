@@ -40,6 +40,7 @@ export type AppActions = {
     credentialResponse: GoogleCredentialResponse,
   ) => Promise<void>;
   submitManualIdentityProofAction: () => Promise<void>;
+  createManualSessionAction: () => Promise<void>;
   getCurrentUserAction: () => Promise<void>;
   listKeysAction: () => Promise<void>;
   getKeyAction: () => Promise<void>;
@@ -70,7 +71,7 @@ const signInWithGoogleToken = async (idToken: string): Promise<void> => {
   );
 
   appState.googleIdToken = idToken;
-  appState.sessionData = null;
+  appState.sessionSummary = null;
   appState.client = null;
   updateSessionUi();
 
@@ -92,23 +93,21 @@ const signInWithGoogleToken = async (idToken: string): Promise<void> => {
   appendLog(
     `Creating CubeSigner session for ${config.orgId} on ${CUBESIGNER_ENV_NAME}...`,
   );
-  const { client, sessionData } = await createSessionFromOidcToken(
+  const { client, sessionSummary } = await createSessionFromOidcToken(
     idToken,
     config,
   );
-  appState.sessionData = sessionData;
+  appState.sessionSummary = sessionSummary;
   appState.client = client;
 
   updateSessionUi();
   appendLog('CubeSigner session created.', 'success');
 
   appendLogJson('Session Metadata', {
-    orgId: sessionData.org_id,
-    sessionId: sessionData.session_info.session_id,
-    authTokenExp: sessionData.session_info.auth_token_exp,
-    sessionExp: sessionData.session_exp,
-    token: `${sessionData.token.slice(0, 30)}...`,
-    refreshToken: `${sessionData.refresh_token.slice(0, 30)}...`,
+    orgId: sessionSummary.orgId,
+    sessionId: sessionSummary.sessionId,
+    authTokenExp: sessionSummary.authTokenExp,
+    sessionExp: sessionSummary.sessionExp,
   });
 };
 
@@ -151,6 +150,35 @@ const submitManualIdentityProofAction = async (): Promise<void> => {
     await ensureProviderUserFromIdentityProof(identityProof);
   appendLog('Registration service confirmed user provisioning.', 'success');
   appendLogJson('Registration Service Response', registrationResponse);
+  appendLog(
+    'User provisioning complete. Use "Manual Session Exchange" to exchange OIDC token for a CubeSigner session.',
+    'success',
+  );
+};
+
+const createManualSessionAction = async (): Promise<void> => {
+  clearLog();
+  const config = readConfigFromDom();
+  const idToken = dom.manualSessionTokenInput.value.trim();
+  if (!idToken) {
+    throw new Error('Paste an OIDC token first.');
+  }
+
+  appendLog('Using manually pasted OIDC token for session exchange...');
+
+  appendLog(
+    `Creating CubeSigner session for ${config.orgId} on ${CUBESIGNER_ENV_NAME} via MFA SDK...`,
+  );
+  const { client, sessionSummary } = await createSessionFromOidcToken(
+    idToken,
+    config,
+  );
+  appState.googleIdToken = idToken;
+  appState.sessionSummary = sessionSummary;
+  appState.client = client;
+  updateSessionUi();
+  appendLog('CubeSigner session created.', 'success');
+  appendLogJson('Session Metadata', sessionSummary);
 };
 
 const getCurrentUserAction = async (): Promise<void> => {
@@ -299,6 +327,7 @@ export const createActions = (): AppActions => {
   return {
     handleGoogleLogin,
     submitManualIdentityProofAction,
+    createManualSessionAction,
     getCurrentUserAction,
     listKeysAction,
     getKeyAction,
