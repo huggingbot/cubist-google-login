@@ -45,11 +45,7 @@ const bindAsyncAction = (
 };
 
 const wireConfigListeners = (rerenderGoogleButton: () => void): void => {
-  const persistOnlyElements: (HTMLInputElement | HTMLSelectElement)[] = [
-    dom.orgIdInput,
-    dom.envSelect,
-    dom.scopesInput,
-  ];
+  const persistOnlyElements: HTMLInputElement[] = [dom.orgIdInput, dom.scopesInput];
 
   for (const element of persistOnlyElements) {
     element.addEventListener('input', saveConfigToStorage);

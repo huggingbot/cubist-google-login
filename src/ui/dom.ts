@@ -12,7 +12,6 @@ const elementById = <TElement extends HTMLElement>(id: string): TElement => {
 
 export const dom: DomRefs = {
   orgIdInput: elementById<HTMLInputElement>('orgId'),
-  envSelect: elementById<HTMLSelectElement>('env'),
   scopesInput: elementById<HTMLInputElement>('scopes'),
   googleClientIdInput: elementById<HTMLInputElement>('googleClientId'),
   googleSigninButton: elementById<HTMLDivElement>('google-signin-btn'),

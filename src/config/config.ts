@@ -8,14 +8,8 @@ import {
   DEFAULT_ORG_ID,
   DEFAULT_SCOPES,
 } from './constants';
-import type { AppConfig, CubistEnvironmentName } from '../shared/types';
+import type { AppConfig } from '../shared/types';
 import { dom } from '../ui/dom';
-
-export const isEnvironmentName = (
-  value: string,
-): value is CubistEnvironmentName => {
-  return value === 'gamma' || value === 'prod' || value === 'beta';
-};
 
 export const parseScopes = (rawScopes: string): Scope[] => {
   return rawScopes
@@ -25,11 +19,6 @@ export const parseScopes = (rawScopes: string): Scope[] => {
 };
 
 export const readConfigFromDom = (): AppConfig => {
-  const envValue = dom.envSelect.value;
-  if (!isEnvironmentName(envValue)) {
-    throw new Error(`Unsupported environment: ${envValue}`);
-  }
-
   const orgId = dom.orgIdInput.value.trim();
   if (!orgId) {
     throw new Error('CubeSigner org ID is required.');
@@ -47,7 +36,6 @@ export const readConfigFromDom = (): AppConfig => {
 
   return {
     orgId,
-    env: envValue,
     scopes,
     googleClientId,
   };
@@ -58,7 +46,6 @@ export const saveConfigToStorage = (): void => {
     CONFIG_STORAGE_KEY,
     JSON.stringify({
       orgId: dom.orgIdInput.value,
-      env: dom.envSelect.value,
       scopes: dom.scopesInput.value,
       googleClientId: dom.googleClientIdInput.value,
     }),
@@ -81,9 +68,6 @@ export const loadConfigFromStorage = (): void => {
       dom.orgIdInput.value = parsed.orgId;
     } else {
       dom.orgIdInput.value = DEFAULT_ORG_ID;
-    }
-    if (typeof parsed.env === 'string' && isEnvironmentName(parsed.env)) {
-      dom.envSelect.value = parsed.env;
     }
     if (typeof parsed.scopes === 'string') {
       dom.scopesInput.value = parsed.scopes;

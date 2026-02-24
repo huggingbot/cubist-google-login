@@ -6,13 +6,19 @@ import { KeyImporter } from '@cubist-labs/cubesigner-sdk-key-import';
 
 import { appState, updateSessionUi } from './state';
 import { readConfigFromDom } from '../config/config';
+import { CUBESIGNER_ENV_NAME } from '../config/constants';
 import {
   assertNoMfaRequired,
+  createIdentityProofFromOidcToken,
   createSessionFromOidcToken,
   ensureClientSession,
   mapKeySummary,
   parseImportKeyType,
 } from '../services/cubesigner';
+import {
+  ensureProviderUserFromIdentityProof,
+  registrationEnsureUserUrl,
+} from '../services/registration';
 import type { GoogleCredentialResponse } from '../shared/types';
 import {
   decodeJwtPayload,
@@ -59,14 +65,36 @@ const getActiveKeyId = (): string => {
 const signInWithGoogleToken = async (idToken: string): Promise<void> => {
   const config = readConfigFromDom();
   appendLog(
-    `Creating CubeSigner session for ${config.orgId} on ${config.env}...`,
+    `Creating identity proof for ${config.orgId} on ${CUBESIGNER_ENV_NAME}...`,
   );
 
+  appState.googleIdToken = idToken;
+  appState.sessionData = null;
+  appState.client = null;
+  updateSessionUi();
+
+  const identityProof = await createIdentityProofFromOidcToken(
+    idToken,
+    config,
+  );
+  appendLog('Identity proof created.', 'success');
+  appendLogJson('Identity Proof', identityProof);
+
+  appendLog(
+    `Forwarding identity proof to registration service (${registrationEnsureUserUrl()})...`,
+  );
+  const registrationResponse =
+    await ensureProviderUserFromIdentityProof(identityProof);
+  appendLog('Registration service confirmed user provisioning.', 'success');
+  appendLogJson('Registration Service Response', registrationResponse);
+
+  appendLog(
+    `Creating CubeSigner session for ${config.orgId} on ${CUBESIGNER_ENV_NAME}...`,
+  );
   const { client, sessionData } = await createSessionFromOidcToken(
     idToken,
     config,
   );
-  appState.googleIdToken = idToken;
   appState.sessionData = sessionData;
   appState.client = client;
 

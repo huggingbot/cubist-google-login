@@ -1,13 +1,32 @@
 import {
   CubeSignerClient,
-  envs,
   type CubeSignerResponse,
   type KeyType as CubeSignerKeyType,
   type SessionData,
 } from '@cubist-labs/cubesigner-sdk';
+import {
+  CubistProvider,
+  type ProviderRegistrationPayload,
+} from '@metamask/mfa-wallet-recovery';
 
-import { ALLOWED_IMPORT_KEY_TYPES } from '../config/constants';
+import { ALLOWED_IMPORT_KEY_TYPES, CUBESIGNER_ENV } from '../config/constants';
 import type { AppConfig, AppState, KeySummary } from '../shared/types';
+
+export type OidcIdentityProof = ProviderRegistrationPayload;
+
+const createCubistProvider = (config: AppConfig): CubistProvider => {
+  const defaultKeyType = ALLOWED_IMPORT_KEY_TYPES[0];
+  if (!defaultKeyType) {
+    throw new Error('At least one import key type must be configured.');
+  }
+
+  return new CubistProvider({
+    env: CUBESIGNER_ENV,
+    orgId: config.orgId,
+    scopes: config.scopes,
+    keyType: defaultKeyType,
+  });
+};
 
 export const ensureClientSession = (state: AppState): CubeSignerClient => {
   if (!state.client) {
@@ -28,6 +47,13 @@ export const assertNoMfaRequired = <TData>(
   return response.data();
 };
 
+export const createIdentityProofFromOidcToken = async (
+  idToken: string,
+  config: AppConfig,
+): Promise<OidcIdentityProof> => {
+  return await createCubistProvider(config).createCubistIdentityProof(idToken);
+};
+
 export const createSessionFromOidcToken = async (
   idToken: string,
   config: AppConfig,
@@ -35,7 +61,7 @@ export const createSessionFromOidcToken = async (
   client: CubeSignerClient;
   sessionData: SessionData;
 }> => {
-  const selectedEnv = envs[config.env];
+  const selectedEnv = CUBESIGNER_ENV;
   const oidcResponse = await CubeSignerClient.createOidcSession(
     selectedEnv,
     config.orgId,

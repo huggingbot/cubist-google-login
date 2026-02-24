@@ -13,12 +13,22 @@
     "@cubist-labs/cubesigner-sdk": "^0.4.217",
     "@cubist-labs/cubesigner-sdk-key-import": "^0.4.217",
     "@hpke/common": "^1.8.1",
-    "@hpke/core": "^1.7.5"
+    "@hpke/core": "^1.7.5",
+    "@metamask/mfa-wallet-e2ee": "file:.local-tarballs/metamask-mfa-wallet-e2ee-0.0.0.tgz",
+    "@metamask/mfa-wallet-interface": "file:.local-tarballs/metamask-mfa-wallet-interface-0.0.0.tgz",
+    "@metamask/mfa-wallet-network": "file:.local-tarballs/metamask-mfa-wallet-network-0.0.0.tgz",
+    "@metamask/mfa-wallet-recovery": "file:.local-tarballs/metamask-mfa-wallet-recovery-0.0.0.tgz"
   },
   "devDependencies": {
     "@types/node": "^25.2.3",
     "typescript": "^5.9.3",
     "vite": "^7.3.1"
+  },
+  "resolutions": {
+    "@metamask/mfa-wallet-e2ee": "file:.local-tarballs/metamask-mfa-wallet-e2ee-0.0.0.tgz",
+    "@metamask/mfa-wallet-interface": "file:.local-tarballs/metamask-mfa-wallet-interface-0.0.0.tgz",
+    "@metamask/mfa-wallet-network": "file:.local-tarballs/metamask-mfa-wallet-network-0.0.0.tgz",
+    "@metamask/mfa-wallet-recovery": "file:.local-tarballs/metamask-mfa-wallet-recovery-0.0.0.tgz"
   },
   "packageManager": "yarn@3.8.7+sha512.bbe7e310ff7fd20dc63b111110f96fe18192234bb0d4f10441fa6b85d2b644c8923db8fbe6d7886257ace948440ab1f83325ad02af457a1806cdc97f03d2508e"
 }

@@ -312,6 +312,57 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@metamask/mfa-wallet-e2ee@file:.local-tarballs/metamask-mfa-wallet-e2ee-0.0.0.tgz::locator=test-google-login-pages%40workspace%3A.":
+  version: 0.0.0
+  resolution: "@metamask/mfa-wallet-e2ee@file:.local-tarballs/metamask-mfa-wallet-e2ee-0.0.0.tgz::locator=test-google-login-pages%40workspace%3A."
+  dependencies:
+    "@msgpack/msgpack": ^3.1.2
+    "@noble/ciphers": ^1.3.0
+    "@noble/curves": ^1.9.2
+    "@noble/hashes": ^1.8.0
+  checksum: df503090a6ad93e49cb8e3b429eb0e26be95499fa9f54fdf8283d5f3896026e9ef50dec14b0f45fbbbfa1ac3ec604ca8d95d364babd37ab31e09db57e3f7cedc
+  languageName: node
+  linkType: hard
+
+"@metamask/mfa-wallet-interface@file:.local-tarballs/metamask-mfa-wallet-interface-0.0.0.tgz::locator=test-google-login-pages%40workspace%3A.":
+  version: 0.0.0
+  resolution: "@metamask/mfa-wallet-interface@file:.local-tarballs/metamask-mfa-wallet-interface-0.0.0.tgz::locator=test-google-login-pages%40workspace%3A."
+  checksum: 7da4a2d06e67729b6386b7bc4d5aebd43090a4db23618aafc079e51f890cf00cf1aea336b1dc7877a8e138c89c63d54af7c164fa4b908cb5b5d23b9bc4c4e9cb
+  languageName: node
+  linkType: hard
+
+"@metamask/mfa-wallet-network@file:.local-tarballs/metamask-mfa-wallet-network-0.0.0.tgz::locator=test-google-login-pages%40workspace%3A.":
+  version: 0.0.0
+  resolution: "@metamask/mfa-wallet-network@file:.local-tarballs/metamask-mfa-wallet-network-0.0.0.tgz::locator=test-google-login-pages%40workspace%3A."
+  dependencies:
+    "@metamask/mfa-wallet-e2ee": ^0.0.0
+    "@msgpack/msgpack": ^3.1.2
+    "@noble/hashes": ^1.8.0
+    centrifuge: ^5.5.2
+  checksum: cd07cdbc0f78eb6f9d80a2b624be32e0efeb58a21d7455e9ad9c816e4624accc11feef57bfffdead89c47cd6330084a3cede715127d7e18a300c0fe1c54fb467
+  languageName: node
+  linkType: hard
+
+"@metamask/mfa-wallet-recovery@file:.local-tarballs/metamask-mfa-wallet-recovery-0.0.0.tgz::locator=test-google-login-pages%40workspace%3A.":
+  version: 0.0.0
+  resolution: "@metamask/mfa-wallet-recovery@file:.local-tarballs/metamask-mfa-wallet-recovery-0.0.0.tgz::locator=test-google-login-pages%40workspace%3A."
+  dependencies:
+    "@cubist-labs/cubesigner-sdk": ^0.4.217
+    "@cubist-labs/cubesigner-sdk-key-import": ^0.4.217
+    "@metamask/mfa-wallet-interface": ^0.0.0
+    "@metamask/mfa-wallet-network": ^0.0.0
+    "@noble/hashes": ^1.8.0
+  checksum: 2bf93d3bc40f89485e28b36d296aa2c7911544b4bb9bf6425cf1e485716f70cde34f338f6c9aa8715d3d61a81ed2165e09fe62b8d36e9b7700208d8688502fb8
+  languageName: node
+  linkType: hard
+
+"@msgpack/msgpack@npm:^3.1.2":
+  version: 3.1.3
+  resolution: "@msgpack/msgpack@npm:3.1.3"
+  checksum: b76416a5c52ec1364a78902a43b33d18d2813f469165fe5d4ad22d2b67f1269f7f2ee660a5fee764de117aa47116db61a84aa57cccb9007d7fc7abd01a78ef33
+  languageName: node
+  linkType: hard
+
 "@msgpackr-extract/msgpackr-extract-darwin-arm64@npm:3.0.3":
   version: 3.0.3
   resolution: "@msgpackr-extract/msgpackr-extract-darwin-arm64@npm:3.0.3"
@@ -354,6 +405,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@noble/ciphers@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "@noble/ciphers@npm:1.3.0"
+  checksum: 19722c35475df9bc78db60d261d0b5ef8a6d722561efc2135453f943eaa421b492195dc666e3e4df2b755bca3739e04f04b9c660198559f5dd05d3cfbf1b9e92
+  languageName: node
+  linkType: hard
+
+"@noble/curves@npm:^1.9.2":
+  version: 1.9.7
+  resolution: "@noble/curves@npm:1.9.7"
+  dependencies:
+    "@noble/hashes": 1.8.0
+  checksum: 65acad44ac6944ab96471109087d6cfcbcaa251faad6295961be9a5ace220634f4b7c74a96d1ee2274ad3880ea953d8e8259893ed8c906c831ef29f5c04ec9cc
+  languageName: node
+  linkType: hard
+
 "@noble/hashes@npm:1.4.0":
   version: 1.4.0
   resolution: "@noble/hashes@npm:1.4.0"
@@ -361,7 +428,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/hashes@npm:~1.8.0":
+"@noble/hashes@npm:1.8.0, @noble/hashes@npm:^1.8.0, @noble/hashes@npm:~1.8.0":
   version: 1.8.0
   resolution: "@noble/hashes@npm:1.8.0"
   checksum: c94e98b941963676feaba62475b1ccfa8341e3f572adbb3b684ee38b658df44100187fa0ef4220da580b13f8d27e87d5492623c8a02ecc61f23fb9960c7918f5
@@ -554,6 +621,79 @@ __metadata:
     tslib: ^2.8.1
     tsyringe: ^4.10.0
   checksum: 9b7843dffd518fc78c07a28a4e0bcfa515c5ebe4af253cd07f632be8f1db61ec07e49725ce81276fb60e643d18376d646c47a01f38dc0f4cc9f0392a38594a7a
+  languageName: node
+  linkType: hard
+
+"@protobufjs/aspromise@npm:^1.1.1, @protobufjs/aspromise@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "@protobufjs/aspromise@npm:1.1.2"
+  checksum: 011fe7ef0826b0fd1a95935a033a3c0fd08483903e1aa8f8b4e0704e3233406abb9ee25350ec0c20bbecb2aad8da0dcea58b392bbd77d6690736f02c143865d2
+  languageName: node
+  linkType: hard
+
+"@protobufjs/base64@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "@protobufjs/base64@npm:1.1.2"
+  checksum: 67173ac34de1e242c55da52c2f5bdc65505d82453893f9b51dc74af9fe4c065cf4a657a4538e91b0d4a1a1e0a0642215e31894c31650ff6e3831471061e1ee9e
+  languageName: node
+  linkType: hard
+
+"@protobufjs/codegen@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "@protobufjs/codegen@npm:2.0.4"
+  checksum: 59240c850b1d3d0b56d8f8098dd04787dcaec5c5bd8de186fa548de86b86076e1c50e80144b90335e705a044edf5bc8b0998548474c2a10a98c7e004a1547e4b
+  languageName: node
+  linkType: hard
+
+"@protobufjs/eventemitter@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@protobufjs/eventemitter@npm:1.1.0"
+  checksum: 0369163a3d226851682f855f81413cbf166cd98f131edb94a0f67f79e75342d86e89df9d7a1df08ac28be2bc77e0a7f0200526bb6c2a407abbfee1f0262d5fd7
+  languageName: node
+  linkType: hard
+
+"@protobufjs/fetch@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@protobufjs/fetch@npm:1.1.0"
+  dependencies:
+    "@protobufjs/aspromise": ^1.1.1
+    "@protobufjs/inquire": ^1.1.0
+  checksum: 3fce7e09eb3f1171dd55a192066450f65324fd5f7cc01a431df01bb00d0a895e6bfb5b0c5561ce157ee1d886349c90703d10a4e11a1a256418ff591b969b3477
+  languageName: node
+  linkType: hard
+
+"@protobufjs/float@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@protobufjs/float@npm:1.0.2"
+  checksum: 5781e1241270b8bd1591d324ca9e3a3128d2f768077a446187a049e36505e91bc4156ed5ac3159c3ce3d2ba3743dbc757b051b2d723eea9cd367bfd54ab29b2f
+  languageName: node
+  linkType: hard
+
+"@protobufjs/inquire@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@protobufjs/inquire@npm:1.1.0"
+  checksum: ca06f02eaf65ca36fb7498fc3492b7fc087bfcc85c702bac5b86fad34b692bdce4990e0ef444c1e2aea8c034227bd1f0484be02810d5d7e931c55445555646f4
+  languageName: node
+  linkType: hard
+
+"@protobufjs/path@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "@protobufjs/path@npm:1.1.2"
+  checksum: 856eeb532b16a7aac071cacde5c5620df800db4c80cee6dbc56380524736205aae21e5ae47739114bf669ab5e8ba0e767a282ad894f3b5e124197cb9224445ee
+  languageName: node
+  linkType: hard
+
+"@protobufjs/pool@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@protobufjs/pool@npm:1.1.0"
+  checksum: d6a34fbbd24f729e2a10ee915b74e1d77d52214de626b921b2d77288bd8f2386808da2315080f2905761527cceffe7ec34c7647bd21a5ae41a25e8212ff79451
+  languageName: node
+  linkType: hard
+
+"@protobufjs/utf8@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@protobufjs/utf8@npm:1.1.0"
+  checksum: f9bf3163d13aaa3b6f5e6fbf37a116e094ea021c0e1f2a7ccd0e12a29e2ce08dafba4e8b36e13f8ed7397e1591610ce880ed1289af4d66cf4ace8a36a9557278
   languageName: node
   linkType: hard
 
@@ -756,6 +896,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/node@npm:>=13.7.0":
+  version: 25.3.0
+  resolution: "@types/node@npm:25.3.0"
+  dependencies:
+    undici-types: ~7.18.0
+  checksum: 3c2a05f53043fc9d33e6e7b2e09399600e25818362c1e72f15ad542c30f1759cbf721b95ffa6db78a12785bd5431ed1ad57c1a98509832785511f8b648f87add
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:^25.2.3":
   version: 25.2.3
   resolution: "@types/node@npm:25.2.3"
@@ -874,6 +1023,16 @@ __metadata:
     cbor-extract:
       optional: true
   checksum: 6cfc6087a732b4460590763b48652dc5ce7a80ac24dab0c05ad3147f3d84193803e3e84e0f1877e917a391c13c5f18aeca4ad1b8d75fea2935f7811db6d4a2a3
+  languageName: node
+  linkType: hard
+
+"centrifuge@npm:^5.5.2":
+  version: 5.5.3
+  resolution: "centrifuge@npm:5.5.3"
+  dependencies:
+    events: ^3.3.0
+    protobufjs: ^7.2.5
+  checksum: a0c3073105178d830e510473c34caecb6afa150ac67df6e3d12ac26c2f217ab64dd6924919d69f7545cb39844771390b9ca76eb94059e7431cc55acb19b04dfd
   languageName: node
   linkType: hard
 
@@ -1015,6 +1174,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"events@npm:^3.3.0":
+  version: 3.3.0
+  resolution: "events@npm:3.3.0"
+  checksum: f6f487ad2198aa41d878fa31452f1a3c00958f46e9019286ff4787c84aac329332ab45c9cdc8c445928fc6d7ded294b9e005a7fce9426488518017831b272780
+  languageName: node
+  linkType: hard
+
 "exponential-backoff@npm:^3.1.1":
   version: 3.1.3
   resolution: "exponential-backoff@npm:3.1.3"
@@ -1150,6 +1316,13 @@ __metadata:
   version: 4.15.9
   resolution: "jose@npm:4.15.9"
   checksum: 41abe1c99baa3cf8a78ebbf93da8f8e50e417b7a26754c4afa21865d87527b8ac2baf66de2c5f6accc3f7d7158658dae7364043677236ea1d07895b040097f15
+  languageName: node
+  linkType: hard
+
+"long@npm:^5.0.0":
+  version: 5.3.2
+  resolution: "long@npm:5.3.2"
+  checksum: be215816b563f4ca27ad3677678b53415bc489f9e3466414e54d2d85f5f8e86768547fa58493bacfb363ffc57a664debc83403ccc2178aef0c40aca28bad47c9
   languageName: node
   linkType: hard
 
@@ -1476,6 +1649,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"protobufjs@npm:^7.2.5":
+  version: 7.5.4
+  resolution: "protobufjs@npm:7.5.4"
+  dependencies:
+    "@protobufjs/aspromise": ^1.1.2
+    "@protobufjs/base64": ^1.1.2
+    "@protobufjs/codegen": ^2.0.4
+    "@protobufjs/eventemitter": ^1.1.0
+    "@protobufjs/fetch": ^1.1.0
+    "@protobufjs/float": ^1.0.2
+    "@protobufjs/inquire": ^1.1.0
+    "@protobufjs/path": ^1.1.2
+    "@protobufjs/pool": ^1.1.0
+    "@protobufjs/utf8": ^1.1.0
+    "@types/node": ">=13.7.0"
+    long: ^5.0.0
+  checksum: 53bf83b9a726b05d43da35bb990dba7536759787dccea9a67b8f31be9df470ba17f1f1b982ca19956cfc7726f3ec7e0e883ca4ad93b5ec753cc025a637fc704f
+  languageName: node
+  linkType: hard
+
 "pvtsutils@npm:^1.3.5, pvtsutils@npm:^1.3.6":
   version: 1.3.6
   resolution: "pvtsutils@npm:1.3.6"
@@ -1677,6 +1870,10 @@ __metadata:
     "@cubist-labs/cubesigner-sdk-key-import": ^0.4.217
     "@hpke/common": ^1.8.1
     "@hpke/core": ^1.7.5
+    "@metamask/mfa-wallet-e2ee": "file:.local-tarballs/metamask-mfa-wallet-e2ee-0.0.0.tgz"
+    "@metamask/mfa-wallet-interface": "file:.local-tarballs/metamask-mfa-wallet-interface-0.0.0.tgz"
+    "@metamask/mfa-wallet-network": "file:.local-tarballs/metamask-mfa-wallet-network-0.0.0.tgz"
+    "@metamask/mfa-wallet-recovery": "file:.local-tarballs/metamask-mfa-wallet-recovery-0.0.0.tgz"
     "@types/node": ^25.2.3
     typescript: ^5.9.3
     vite: ^7.3.1
@@ -1740,6 +1937,13 @@ __metadata:
   version: 7.16.0
   resolution: "undici-types@npm:7.16.0"
   checksum: 1ef68fc6c5bad200c8b6f17de8e5bc5cfdcadc164ba8d7208cd087cfa8583d922d8316a7fd76c9a658c22b4123d3ff847429185094484fbc65377d695c905857
+  languageName: node
+  linkType: hard
+
+"undici-types@npm:~7.18.0":
+  version: 7.18.2
+  resolution: "undici-types@npm:7.18.2"
+  checksum: 23da306c8366574adec305b06a8519ab5c7d09e3f5d16c1a98709a34fae17da09ec95198f30f86c00055e02efa8bfcc843e84e8aebeb9b8d6bb3e06afccae07a
   languageName: node
   linkType: hard
 

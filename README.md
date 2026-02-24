@@ -6,6 +6,29 @@ This app is a browser test harness for:
 - CubeSigner OIDC session creation
 - Key/share operations through CubeSigner SDK
 
+## Local MetaMask MFA SDK tarballs
+
+This repo consumes local tarballs for `@metamask/mfa-wallet-recovery` and its
+workspace dependencies from `.local-tarballs/`.
+
+When the SDK changes, rebuild + repack from
+`/Users/weechien/metamask/mfa-wallet-sdk`:
+
+```bash
+yarn install
+yarn build
+npm pack ./packages/mfa-wallet-interface --pack-destination /Users/weechien/myproject/test-google-login/.local-tarballs
+npm pack ./packages/mfa-wallet-e2ee --pack-destination /Users/weechien/myproject/test-google-login/.local-tarballs
+npm pack ./packages/mfa-wallet-network --pack-destination /Users/weechien/myproject/test-google-login/.local-tarballs
+npm pack ./packages/mfa-wallet-recovery --pack-destination /Users/weechien/myproject/test-google-login/.local-tarballs
+```
+
+Then in this repo:
+
+```bash
+YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install
+```
+
 ## Local development
 
 ```bash
@@ -30,10 +53,16 @@ VITE_DEFAULT_ORG_ID=Org#your-org-id
 VITE_DEFAULT_GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
 ```
 
+Registration service settings are hardcoded to match
+`va-mmcx-recovery-registration-service-api`:
+
+- **Path**: `/recovery/registration/ensure-user`
+- **Provider verifier**: `cubist`
+- **Base URL**: `https://recovery-registration.dev-api.cx.metamask.io`
+
 ## Required config in UI
 
 - **CubeSigner Org ID**: your `Org#...`
-- **Environment**: `gamma`, `beta`, or `prod`
 - **Google Client ID**: the Google OAuth Web Client ID
 - **Scopes**: default is `sign:*,manage:*,export:*`
 
@@ -41,8 +70,11 @@ When you click Google Sign-In, the app:
 
 1. receives Google `credential` (ID token),
 2. decodes and displays token payload details,
-3. calls `CubeSignerClient.createOidcSession(...)` with that ID token,
-4. creates a CubeSigner client session and enables key/share actions.
+3. calls `CubistProvider.createCubistIdentityProof(...)` to create an identity proof,
+4. logs the identity proof payload,
+5. forwards the proof to the registration service (`ensure-user`) so the backend can create/confirm the user,
+6. calls `CubeSignerClient.createOidcSession(...)` with the same ID token,
+7. creates a CubeSigner client session and enables key/share actions.
 
 ## GitHub Pages build
 

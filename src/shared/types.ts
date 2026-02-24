@@ -6,12 +6,10 @@ import type {
   SessionData,
 } from '@cubist-labs/cubesigner-sdk';
 
-export type CubistEnvironmentName = 'gamma' | 'prod' | 'beta';
 export type LogLevel = 'info' | 'success' | 'error';
 
 export type AppConfig = {
   orgId: string;
-  env: CubistEnvironmentName;
   scopes: Scope[];
   googleClientId: string;
 };
@@ -24,7 +22,6 @@ export type AppState = {
 
 export type DomRefs = {
   orgIdInput: HTMLInputElement;
-  envSelect: HTMLSelectElement;
   scopesInput: HTMLInputElement;
   googleClientIdInput: HTMLInputElement;
   googleSigninButton: HTMLDivElement;
