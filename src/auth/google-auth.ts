@@ -10,6 +10,19 @@ type GoogleLoginHandler = (
   credentialResponse: GoogleCredentialResponse,
 ) => Promise<void>;
 
+let activeGoogleLoginHandler: GoogleLoginHandler | null = null;
+
+const runGoogleLoginHandler = (response: GoogleCredentialResponse): void => {
+  const handler = activeGoogleLoginHandler;
+  if (!handler) {
+    appendLog('No Google login handler is configured.', 'error');
+    return;
+  }
+  handler(response).catch((callbackError: unknown) => {
+    appendLog(toErrorMessage(callbackError), 'error');
+  });
+};
+
 export const renderGoogleButton = (
   handleGoogleLogin: GoogleLoginHandler,
 ): void => {
@@ -19,15 +32,12 @@ export const renderGoogleButton = (
   }
 
   const config = readConfigFromDom();
+  activeGoogleLoginHandler = handleGoogleLogin;
   dom.googleSigninButton.innerHTML = '';
 
   googleAccounts.initialize({
     client_id: config.googleClientId,
-    callback: (response) => {
-      handleGoogleLogin(response).catch((callbackError: unknown) => {
-        appendLog(toErrorMessage(callbackError), 'error');
-      });
-    },
+    callback: runGoogleLoginHandler,
     itp_support: true,
   });
 
@@ -38,6 +48,30 @@ export const renderGoogleButton = (
     shape: 'rectangular',
     width: 320,
   });
+};
+
+const clickRenderedGoogleButton = (): boolean => {
+  const candidates: Array<HTMLElement | null> = [
+    dom.googleSigninButton.querySelector<HTMLElement>('[role="button"]'),
+    dom.googleSigninButton.querySelector<HTMLElement>('div[tabindex]'),
+    dom.googleSigninButton.firstElementChild as HTMLElement | null,
+  ];
+  for (const candidate of candidates) {
+    if (!candidate) {
+      continue;
+    }
+    candidate.click();
+    return true;
+  }
+  return false;
+};
+
+export const startGoogleLoginFlow = (
+  handleGoogleLogin: GoogleLoginHandler,
+): boolean => {
+  renderGoogleButton(handleGoogleLogin);
+  window.google?.accounts?.id?.disableAutoSelect?.();
+  return clickRenderedGoogleButton();
 };
 
 export const waitForGoogleLibraryAndRender = (

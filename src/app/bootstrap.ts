@@ -1,15 +1,16 @@
 /* eslint-disable no-restricted-globals */
 
 import { createActions } from './actions';
-import { updateSessionUi } from './state';
+import { appState, switchTab } from './state';
 import {
   renderGoogleButton,
+  startGoogleLoginFlow,
   waitForGoogleLibraryAndRender,
 } from '../auth/google-auth';
 import { loadConfigFromStorage, saveConfigToStorage } from '../config/config';
 import { toErrorMessage } from '../shared/utils';
 import { dom } from '../ui/dom';
-import { appendLog, renderKeysOutput } from '../ui/logger';
+import { appendLog, clearLog } from '../ui/logger';
 
 const bindAsyncAction = (
   button: HTMLButtonElement,
@@ -44,8 +45,64 @@ const bindAsyncAction = (
   });
 };
 
+const wireConfigToggle = (): void => {
+  dom.configToggle.addEventListener('click', () => {
+    const collapsed = dom.configBody.classList.toggle('hidden');
+    dom.configToggle.classList.toggle('collapsed', collapsed);
+  });
+};
+
+const wireTabSwitching = (): void => {
+  for (const btn of dom.tabButtons) {
+    btn.addEventListener('click', () => {
+      const tabId = btn.dataset.tab;
+      if (tabId) {
+        switchTab(tabId);
+      }
+    });
+  }
+};
+
+const wireCopyButtons = (): void => {
+  for (const btn of document.querySelectorAll<HTMLButtonElement>('.copy-btn')) {
+    btn.addEventListener('click', () => {
+      const targetId = btn.dataset.copy;
+      if (!targetId) {
+        return;
+      }
+      const target = document.getElementById(targetId);
+      if (!target) {
+        return;
+      }
+      const text = target.textContent ?? '';
+      navigator.clipboard.writeText(text).then(
+        () => {
+          const original = btn.textContent;
+          btn.textContent = 'Copied!';
+          setTimeout(() => {
+            btn.textContent = original;
+          }, 1200);
+        },
+        () => {
+          btn.textContent = 'Failed';
+          setTimeout(() => {
+            btn.textContent = 'Copy';
+          }, 1200);
+        },
+      );
+    });
+  }
+};
+
+const wireLogClear = (): void => {
+  dom.logClearButton.addEventListener('click', clearLog);
+};
+
 const wireConfigListeners = (rerenderGoogleButton: () => void): void => {
-  const persistOnlyElements: HTMLInputElement[] = [dom.orgIdInput, dom.scopesInput];
+  const persistOnlyElements: HTMLInputElement[] = [
+    dom.orgIdInput,
+    dom.scopesInput,
+  ];
 
   for (const element of persistOnlyElements) {
     element.addEventListener('input', saveConfigToStorage);
@@ -61,16 +118,37 @@ const wireConfigListeners = (rerenderGoogleButton: () => void): void => {
 const initializeApp = (): void => {
   const actions = createActions();
 
+  const handleFullFlowGoogleLogin = async (
+    credentialResponse: Parameters<
+      typeof actions.handleGoogleLoginFullFlow
+    >[0],
+  ): Promise<void> => {
+    try {
+      await actions.handleGoogleLoginFullFlow(credentialResponse);
+    } finally {
+      try {
+        renderGoogleButton(actions.handleGoogleLoginManual);
+      } catch (renderError: unknown) {
+        appendLog(
+          `Google button restore failed: ${toErrorMessage(renderError)}`,
+          'error',
+        );
+      }
+    }
+  };
+
   loadConfigFromStorage();
-  updateSessionUi();
-  renderKeysOutput([]);
+  wireConfigToggle();
+  wireTabSwitching();
+  wireCopyButtons();
+  wireLogClear();
 
   const rerenderGoogleButton = (): void => {
     if (!window.google?.accounts?.id) {
       return;
     }
     try {
-      renderGoogleButton(actions.handleGoogleLogin);
+      renderGoogleButton(actions.handleGoogleLoginManual);
       appendLog('Google button updated with new client ID.');
     } catch (renderError: unknown) {
       appendLog(
@@ -83,66 +161,57 @@ const initializeApp = (): void => {
   wireConfigListeners(rerenderGoogleButton);
 
   bindAsyncAction(
-    dom.manualIdentityProofSubmitButton,
-    'Manual identity proof submit',
-    actions.submitManualIdentityProofAction,
+    dom.createIdentityProofButton,
+    'Create identity proof',
+    actions.createIdentityProofStep,
   );
   bindAsyncAction(
-    dom.manualSessionCreateButton,
-    'Manual session exchange',
-    actions.createManualSessionAction,
+    dom.createUserButton,
+    'Create user',
+    actions.createUserStep,
   );
   bindAsyncAction(
-    dom.getUserButton,
-    'Get user profile',
-    actions.getCurrentUserAction,
-  );
-  bindAsyncAction(dom.listKeysButton, 'List keys', actions.listKeysAction);
-  bindAsyncAction(dom.getKeyButton, 'Get key details', actions.getKeyAction);
-  bindAsyncAction(
-    dom.getMetadataButton,
-    'Get metadata',
-    actions.getMetadataAction,
-  );
-  bindAsyncAction(
-    dom.setMetadataButton,
-    'Set metadata',
-    actions.setMetadataAction,
-  );
-  bindAsyncAction(
-    dom.clearMetadataButton,
-    'Clear metadata',
-    actions.clearMetadataAction,
-  );
-  bindAsyncAction(
-    dom.disableKeyButton,
-    'Disable key',
-    actions.disableKeyAction,
-  );
-  bindAsyncAction(dom.deleteKeyButton, 'Delete key', actions.deleteKeyAction);
-  bindAsyncAction(
-    dom.importSecretButton,
-    'Import raw secret',
-    actions.importSecretAction,
-  );
-  bindAsyncAction(dom.initExportButton, 'Init export', actions.initExportAction);
-  bindAsyncAction(
-    dom.getExportStatusButton,
-    'Get export status',
-    actions.getExportStatusAction,
-  );
-  bindAsyncAction(
-    dom.completeExportButton,
-    'Complete export',
-    actions.completeExportAction,
-  );
-  bindAsyncAction(
-    dom.cancelExportButton,
-    'Cancel export',
-    actions.cancelExportAction,
+    dom.createSessionButton,
+    'Create session token',
+    actions.createSessionStep,
   );
 
-  waitForGoogleLibraryAndRender(actions.handleGoogleLogin);
+  dom.runFullFlowButton.addEventListener('click', () => {
+    dom.runFullFlowButton.disabled = true;
+    appendLog('Run full flow...');
+
+    const executeAction = async (): Promise<void> => {
+      try {
+        await actions.prepareFullFlowAction();
+        const started = startGoogleLoginFlow(handleFullFlowGoogleLogin);
+        if (!started) {
+          appendLog(
+            'Google sign-in could not be opened automatically. Click the Google button to continue full flow.',
+            'error',
+          );
+        }
+      } catch (actionError: unknown) {
+        appState.pendingGoogleFlow = null;
+        appendLog(
+          `Run full flow failed: ${toErrorMessage(actionError)}`,
+          'error',
+        );
+      } finally {
+        dom.runFullFlowButton.disabled = false;
+      }
+    };
+
+    executeAction().catch((unhandledError: unknown) => {
+      appState.pendingGoogleFlow = null;
+      appendLog(
+        `Run full flow failed unexpectedly: ${toErrorMessage(unhandledError)}`,
+        'error',
+      );
+      dom.runFullFlowButton.disabled = false;
+    });
+  });
+
+  waitForGoogleLibraryAndRender(actions.handleGoogleLoginManual);
 };
 
 document.addEventListener('DOMContentLoaded', () => {

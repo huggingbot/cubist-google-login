@@ -1,9 +1,7 @@
 /* eslint-disable no-restricted-globals */
 
-import type {
-  CubeSignerClient,
-  Scope,
-} from '@cubist-labs/cubesigner-sdk';
+import type { Scope } from '@cubist-labs/cubesigner-sdk';
+import type { ProviderRegistrationPayload } from '@metamask/mfa-wallet-recovery';
 
 export type LogLevel = 'info' | 'success' | 'error';
 
@@ -13,17 +11,20 @@ export type AppConfig = {
   googleClientId: string;
 };
 
-export type AppState = {
-  googleIdToken: string | null;
-  sessionSummary: SessionSummary | null;
-  client: CubeSignerClient | null;
-};
+export type FlowMode = 'manual' | 'fullFlow';
 
-export type SessionSummary = {
+export type SessionExchangeResult = {
   orgId: string;
   sessionId: string;
+  sessionToken: string;
+  refreshToken: string;
   authTokenExp: number | null;
+  refreshTokenExp: number | null;
   sessionExp: number | null;
+};
+
+export type AppState = {
+  pendingGoogleFlow: FlowMode | null;
 };
 
 export type DomRefs = {
@@ -31,39 +32,37 @@ export type DomRefs = {
   scopesInput: HTMLInputElement;
   googleClientIdInput: HTMLInputElement;
   googleSigninButton: HTMLDivElement;
-  sessionStatus: HTMLDivElement;
-  keysOutput: HTMLPreElement;
-  logContainer: HTMLDivElement;
-  keyIdInput: HTMLInputElement;
-  metadataPayloadInput: HTMLTextAreaElement;
-  importKeyTypeSelect: HTMLSelectElement;
-  importSecretHexInput: HTMLInputElement;
-  getUserButton: HTMLButtonElement;
-  listKeysButton: HTMLButtonElement;
-  getKeyButton: HTMLButtonElement;
-  getMetadataButton: HTMLButtonElement;
-  setMetadataButton: HTMLButtonElement;
-  clearMetadataButton: HTMLButtonElement;
-  disableKeyButton: HTMLButtonElement;
-  deleteKeyButton: HTMLButtonElement;
-  importSecretButton: HTMLButtonElement;
-  initExportButton: HTMLButtonElement;
-  getExportStatusButton: HTMLButtonElement;
-  completeExportButton: HTMLButtonElement;
-  cancelExportButton: HTMLButtonElement;
-  manualIdentityProofInput: HTMLTextAreaElement;
-  manualIdentityProofSubmitButton: HTMLButtonElement;
-  manualSessionTokenInput: HTMLTextAreaElement;
-  manualSessionCreateButton: HTMLButtonElement;
-};
 
-export type KeySummary = {
-  keyId: string;
-  materialId: string;
-  keyType: string;
-  enabled: boolean;
-  owner: string | undefined;
-  metadata: unknown;
+  configToggle: HTMLButtonElement;
+  configBody: HTMLDivElement;
+
+  tabButtons: HTMLButtonElement[];
+  tabPanels: HTMLDivElement[];
+
+  // Tab 2: Identity Proof
+  idTokenForProofInput: HTMLTextAreaElement;
+  createIdentityProofButton: HTMLButtonElement;
+  identityProofOutput: HTMLPreElement;
+
+  // Tab 3: Create User
+  identityProofForUserInput: HTMLTextAreaElement;
+  createUserButton: HTMLButtonElement;
+  userResultOutput: HTMLPreElement;
+
+  // Tab 4: Session Token
+  idTokenForSessionInput: HTMLTextAreaElement;
+  createSessionButton: HTMLButtonElement;
+  sessionTokenOutput: HTMLPreElement;
+
+  // Tab 5: Full Flow
+  runFullFlowButton: HTMLButtonElement;
+  fullFlowResultOutput: HTMLPreElement;
+
+  // Tab 1: Google Login
+  idTokenOutput: HTMLPreElement;
+
+  logContainer: HTMLDivElement;
+  logClearButton: HTMLButtonElement;
 };
 
 export type OidcPayload = {
@@ -108,6 +107,7 @@ declare global {
             parent: HTMLElement,
             config: GoogleButtonConfig,
           ) => void;
+          disableAutoSelect?: () => void;
         };
       };
     };

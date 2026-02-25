@@ -15,50 +15,42 @@ export const dom: DomRefs = {
   scopesInput: elementById<HTMLInputElement>('scopes'),
   googleClientIdInput: elementById<HTMLInputElement>('googleClientId'),
   googleSigninButton: elementById<HTMLDivElement>('google-signin-btn'),
-  sessionStatus: elementById<HTMLDivElement>('session-status'),
-  keysOutput: elementById<HTMLPreElement>('keys-output'),
-  logContainer: elementById<HTMLDivElement>('log'),
-  keyIdInput: elementById<HTMLInputElement>('keyId'),
-  metadataPayloadInput: elementById<HTMLTextAreaElement>('metadataPayload'),
-  importKeyTypeSelect: elementById<HTMLSelectElement>('importKeyType'),
-  importSecretHexInput: elementById<HTMLInputElement>('importSecretHex'),
-  getUserButton: elementById<HTMLButtonElement>('action-get-user'),
-  listKeysButton: elementById<HTMLButtonElement>('action-list-keys'),
-  getKeyButton: elementById<HTMLButtonElement>('action-get-key'),
-  getMetadataButton: elementById<HTMLButtonElement>('action-get-metadata'),
-  setMetadataButton: elementById<HTMLButtonElement>('action-set-metadata'),
-  clearMetadataButton: elementById<HTMLButtonElement>('action-clear-metadata'),
-  disableKeyButton: elementById<HTMLButtonElement>('action-disable-key'),
-  deleteKeyButton: elementById<HTMLButtonElement>('action-delete-key'),
-  importSecretButton: elementById<HTMLButtonElement>('action-import-secret'),
-  initExportButton: elementById<HTMLButtonElement>('action-init-export'),
-  getExportStatusButton: elementById<HTMLButtonElement>('action-get-export-status'),
-  completeExportButton: elementById<HTMLButtonElement>('action-complete-export'),
-  cancelExportButton: elementById<HTMLButtonElement>('action-cancel-export'),
-  manualIdentityProofInput: elementById<HTMLTextAreaElement>(
-    'manualIdentityProof',
-  ),
-  manualIdentityProofSubmitButton: elementById<HTMLButtonElement>(
-    'action-manual-identity-proof-submit',
-  ),
-  manualSessionTokenInput: elementById<HTMLTextAreaElement>('manualSessionToken'),
-  manualSessionCreateButton: elementById<HTMLButtonElement>(
-    'action-manual-session-create',
-  ),
-};
 
-export const actionButtons: HTMLButtonElement[] = [
-  dom.getUserButton,
-  dom.listKeysButton,
-  dom.getKeyButton,
-  dom.getMetadataButton,
-  dom.setMetadataButton,
-  dom.clearMetadataButton,
-  dom.disableKeyButton,
-  dom.deleteKeyButton,
-  dom.importSecretButton,
-  dom.initExportButton,
-  dom.getExportStatusButton,
-  dom.completeExportButton,
-  dom.cancelExportButton,
-];
+  configToggle: elementById<HTMLButtonElement>('config-toggle'),
+  configBody: elementById<HTMLDivElement>('config-body'),
+
+  tabButtons: Array.from(
+    document.querySelectorAll<HTMLButtonElement>('.tab-btn'),
+  ),
+  tabPanels: Array.from(
+    document.querySelectorAll<HTMLDivElement>('.tab-panel'),
+  ),
+
+  idTokenForProofInput: elementById<HTMLTextAreaElement>(
+    'input-id-token-for-proof',
+  ),
+  createIdentityProofButton: elementById<HTMLButtonElement>(
+    'action-create-identity-proof',
+  ),
+  identityProofOutput: elementById<HTMLPreElement>('output-identity-proof'),
+
+  identityProofForUserInput: elementById<HTMLTextAreaElement>(
+    'input-identity-proof-for-user',
+  ),
+  createUserButton: elementById<HTMLButtonElement>('action-create-user'),
+  userResultOutput: elementById<HTMLPreElement>('output-user-result'),
+
+  idTokenForSessionInput: elementById<HTMLTextAreaElement>(
+    'input-id-token-for-session',
+  ),
+  createSessionButton: elementById<HTMLButtonElement>('action-create-session'),
+  sessionTokenOutput: elementById<HTMLPreElement>('output-session-token'),
+
+  runFullFlowButton: elementById<HTMLButtonElement>('action-run-full-flow'),
+  fullFlowResultOutput: elementById<HTMLPreElement>('output-full-flow-result'),
+
+  idTokenOutput: elementById<HTMLPreElement>('output-id-token'),
+
+  logContainer: elementById<HTMLDivElement>('log'),
+  logClearButton: elementById<HTMLButtonElement>('log-clear-btn'),
+};

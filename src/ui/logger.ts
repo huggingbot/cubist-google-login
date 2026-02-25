@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-globals */
 
 import { dom } from './dom';
-import type { KeySummary, LogLevel } from '../shared/types';
+import type { LogLevel } from '../shared/types';
 
 export const appendLog = (message: string, level: LogLevel = 'info'): void => {
   const entry = document.createElement('div');
@@ -33,11 +33,4 @@ export const appendLogJson = (label: string, value: unknown): void => {
 
 export const clearLog = (): void => {
   dom.logContainer.innerHTML = '';
-};
-
-export const renderKeysOutput = (summaries: KeySummary[]): void => {
-  dom.keysOutput.textContent =
-    summaries.length > 0
-      ? JSON.stringify(summaries, null, 2)
-      : 'No keys available in current session.';
 };

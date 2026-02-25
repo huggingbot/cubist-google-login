@@ -21,7 +21,4 @@ export default defineConfig({
       '@hpke/common': hpkeCommonEsmPath,
     },
   },
-  optimizeDeps: {
-    include: ['@cubist-labs/cubesigner-sdk-key-import'],
-  },
 });

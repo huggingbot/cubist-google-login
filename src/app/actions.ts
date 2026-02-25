@@ -1,125 +1,70 @@
-import {
-  userExportDecrypt,
-  userExportKeygen,
-} from '@cubist-labs/cubesigner-sdk';
-import { KeyImporter } from '@cubist-labs/cubesigner-sdk-key-import';
-
-import { appState, updateSessionUi } from './state';
+import { appState } from './state';
 import { readConfigFromDom } from '../config/config';
 import { CUBESIGNER_ENV_NAME } from '../config/constants';
 import {
-  assertNoMfaRequired,
   createIdentityProofFromOidcToken,
   createSessionFromOidcToken,
-  ensureClientSession,
-  mapKeySummary,
-  parseImportKeyType,
 } from '../services/cubesigner';
 import {
   ensureProviderUserFromIdentityProof,
-  parseIdentityProofJson,
   registrationEnsureUserUrl,
 } from '../services/registration';
 import type { GoogleCredentialResponse } from '../shared/types';
-import {
-  decodeJwtPayload,
-  hexToBytes,
-  parseMetadataPayload,
-  truncateLongStrings,
-} from '../shared/utils';
+import { decodeJwtPayload } from '../shared/utils';
 import { dom } from '../ui/dom';
-import {
-  appendLog,
-  appendLogJson,
-  clearLog,
-  renderKeysOutput,
-} from '../ui/logger';
+import { appendLog, appendLogJson } from '../ui/logger';
 
 export type AppActions = {
-  handleGoogleLogin: (
+  handleGoogleLoginManual: (
     credentialResponse: GoogleCredentialResponse,
   ) => Promise<void>;
-  submitManualIdentityProofAction: () => Promise<void>;
-  createManualSessionAction: () => Promise<void>;
-  getCurrentUserAction: () => Promise<void>;
-  listKeysAction: () => Promise<void>;
-  getKeyAction: () => Promise<void>;
-  getMetadataAction: () => Promise<void>;
-  setMetadataAction: () => Promise<void>;
-  clearMetadataAction: () => Promise<void>;
-  disableKeyAction: () => Promise<void>;
-  deleteKeyAction: () => Promise<void>;
-  importSecretAction: () => Promise<void>;
-  initExportAction: () => Promise<void>;
-  getExportStatusAction: () => Promise<void>;
-  completeExportAction: () => Promise<void>;
-  cancelExportAction: () => Promise<void>;
+  handleGoogleLoginFullFlow: (
+    credentialResponse: GoogleCredentialResponse,
+  ) => Promise<void>;
+  prepareFullFlowAction: () => Promise<void>;
+  createIdentityProofStep: () => Promise<void>;
+  createUserStep: () => Promise<void>;
+  createSessionStep: () => Promise<void>;
 };
 
-const getActiveKeyId = (): string => {
-  const keyId = dom.keyIdInput.value.trim();
-  if (!keyId) {
-    throw new Error('Provide an active key ID.');
+const setTabDot = (dotName: string, done: boolean): void => {
+  const dot = document.querySelector<HTMLElement>(
+    `.tab-dot[data-dot="${dotName}"]`,
+  );
+  if (dot) {
+    dot.classList.toggle('done', done);
   }
-  return keyId;
 };
 
-const signInWithGoogleToken = async (idToken: string): Promise<void> => {
-  const config = readConfigFromDom();
-  appendLog(
-    `Creating identity proof for ${config.orgId} on ${CUBESIGNER_ENV_NAME}...`,
-  );
-
-  appState.googleIdToken = idToken;
-  appState.sessionSummary = null;
-  appState.client = null;
-  updateSessionUi();
-
-  const identityProof = await createIdentityProofFromOidcToken(
-    idToken,
-    config,
-  );
-  appendLog('Identity proof created.', 'success');
-  appendLogJson('Identity Proof', identityProof);
-
-  appendLog(
-    `Forwarding identity proof to registration service (${registrationEnsureUserUrl()})...`,
-  );
-  const registrationResponse =
-    await ensureProviderUserFromIdentityProof(identityProof);
-  appendLog('Registration service confirmed user provisioning.', 'success');
-  appendLogJson('Registration Service Response', registrationResponse);
-
-  appendLog(
-    `Creating CubeSigner session for ${config.orgId} on ${CUBESIGNER_ENV_NAME}...`,
-  );
-  const { client, sessionSummary } = await createSessionFromOidcToken(
-    idToken,
-    config,
-  );
-  appState.sessionSummary = sessionSummary;
-  appState.client = client;
-
-  updateSessionUi();
-  appendLog('CubeSigner session created.', 'success');
-
-  appendLogJson('Session Metadata', {
-    orgId: sessionSummary.orgId,
-    sessionId: sessionSummary.sessionId,
-    authTokenExp: sessionSummary.authTokenExp,
-    sessionExp: sessionSummary.sessionExp,
-  });
+const setOutput = (el: HTMLPreElement, text: string): void => {
+  el.textContent = text;
+  el.classList.add('has-content');
 };
 
-const handleGoogleLogin = async (
+const readGoogleIdToken = (
+  credentialResponse: GoogleCredentialResponse,
+): string => {
+  const idToken = credentialResponse.credential.trim();
+  if (!idToken) {
+    throw new Error('Google sign-in did not return an ID token.');
+  }
+  return idToken;
+};
+
+const handleGoogleLoginManual = async (
   credentialResponse: GoogleCredentialResponse,
 ): Promise<void> => {
-  clearLog();
-
-  const idToken = credentialResponse.credential;
+  const idToken = readGoogleIdToken(credentialResponse);
   appendLog('Google sign-in succeeded. Decoding token...');
 
   const payload = decodeJwtPayload(idToken);
+
+  setOutput(dom.idTokenOutput, idToken);
+  setTabDot('google-login', true);
+
+  dom.idTokenForProofInput.value = idToken;
+  dom.idTokenForSessionInput.value = idToken;
+
   appendLogJson('Google ID Token Payload', {
     iss: payload.iss,
     sub: payload.sub,
@@ -129,217 +74,149 @@ const handleGoogleLogin = async (
     iat: payload.iat,
     exp: payload.exp,
   });
-
-  appendLog('Raw ID Token (copy this to use on another origin):');
-  appendLog(idToken);
-
-  await signInWithGoogleToken(idToken);
 };
 
-const submitManualIdentityProofAction = async (): Promise<void> => {
-  clearLog();
-  appendLog('Using manually pasted identity proof JSON...');
+const createIdentityProofStep = async (): Promise<void> => {
+  const idToken = dom.idTokenForProofInput.value.trim();
+  if (!idToken) {
+    throw new Error(
+      'No ID token provided. Paste a Google ID token in the input above, or complete Step 1 first.',
+    );
+  }
+  const config = readConfigFromDom();
+  appendLog(
+    `Creating identity proof for ${config.orgId} on ${CUBESIGNER_ENV_NAME}...`,
+  );
+  const identityProof = await createIdentityProofFromOidcToken(idToken, config);
 
-  const identityProof = parseIdentityProofJson(dom.manualIdentityProofInput.value);
+  const proofJson = JSON.stringify(identityProof, null, 2);
+  setOutput(dom.identityProofOutput, proofJson);
+  setTabDot('identity-proof', true);
+
+  dom.identityProofForUserInput.value = proofJson;
+
+  appendLog('Identity proof created.', 'success');
   appendLogJson('Identity Proof', identityProof);
+};
+
+const createUserStep = async (): Promise<void> => {
+  const proofText = dom.identityProofForUserInput.value.trim();
+  if (!proofText) {
+    throw new Error(
+      'No identity proof provided. Paste an identity proof JSON in the input above, or complete Step 2 first.',
+    );
+  }
+
+  let identityProof: unknown;
+  try {
+    identityProof = JSON.parse(proofText);
+  } catch {
+    throw new Error(
+      'Identity proof input is not valid JSON. Check formatting.',
+    );
+  }
 
   appendLog(
     `Forwarding identity proof to registration service (${registrationEnsureUserUrl()})...`,
   );
-  const registrationResponse =
-    await ensureProviderUserFromIdentityProof(identityProof);
+
+  const idToken =
+    dom.idTokenForProofInput.value.trim() ||
+    dom.idTokenForSessionInput.value.trim();
+
+  const registrationResult = await ensureProviderUserFromIdentityProof(
+    identityProof as Parameters<typeof ensureProviderUserFromIdentityProof>[0],
+    idToken
+      ? { providerToken: idToken, registrationToken: idToken }
+      : undefined,
+  );
+
+  const resultText =
+    typeof registrationResult === 'string'
+      ? registrationResult
+      : JSON.stringify(registrationResult, null, 2);
+  setOutput(dom.userResultOutput, resultText);
+  setTabDot('create-user', true);
+
   appendLog('Registration service confirmed user provisioning.', 'success');
-  appendLogJson('Registration Service Response', registrationResponse);
-  appendLog(
-    'User provisioning complete. Use "Manual Session Exchange" to exchange OIDC token for a CubeSigner session.',
-    'success',
-  );
+  appendLogJson('User Creation Result', registrationResult);
 };
 
-const createManualSessionAction = async (): Promise<void> => {
-  clearLog();
-  const config = readConfigFromDom();
-  const idToken = dom.manualSessionTokenInput.value.trim();
+const createSessionStep = async (): Promise<void> => {
+  const idToken = dom.idTokenForSessionInput.value.trim();
   if (!idToken) {
-    throw new Error('Paste an OIDC token first.');
+    throw new Error(
+      'No ID token provided. Paste a Google ID token in the input above, or complete Step 1 first.',
+    );
   }
-
-  appendLog('Using manually pasted OIDC token for session exchange...');
-
+  const config = readConfigFromDom();
   appendLog(
-    `Creating CubeSigner session for ${config.orgId} on ${CUBESIGNER_ENV_NAME} via MFA SDK...`,
+    `Exchanging ID token for session token for ${config.orgId} on ${CUBESIGNER_ENV_NAME}...`,
   );
-  const { client, sessionSummary } = await createSessionFromOidcToken(
-    idToken,
-    config,
-  );
-  appState.googleIdToken = idToken;
-  appState.sessionSummary = sessionSummary;
-  appState.client = client;
-  updateSessionUi();
-  appendLog('CubeSigner session created.', 'success');
-  appendLogJson('Session Metadata', sessionSummary);
-};
+  const sessionResult = await createSessionFromOidcToken(idToken, config);
 
-const getCurrentUserAction = async (): Promise<void> => {
-  const user = await ensureClientSession(appState).user();
-  appendLogJson('Current User', user);
-};
+  setOutput(dom.sessionTokenOutput, JSON.stringify(sessionResult, null, 2));
+  setTabDot('session-token', true);
 
-const listKeysAction = async (): Promise<void> => {
-  const keys = await ensureClientSession(appState).sessionKeys();
-  const summaries = keys.map((key) => mapKeySummary(key));
-
-  renderKeysOutput(summaries);
-  appendLogJson('Accessible Keys / Shares', summaries);
-
-  const firstSummary = summaries[0];
-  if (firstSummary && !dom.keyIdInput.value.trim()) {
-    dom.keyIdInput.value = firstSummary.keyId;
-  }
-};
-
-const getKeyAction = async (): Promise<void> => {
-  const key = await ensureClientSession(appState)
-    .org()
-    .getKey(getActiveKeyId());
-  appendLogJson('Key Details', key.cached);
-};
-
-const getMetadataAction = async (): Promise<void> => {
-  const key = await ensureClientSession(appState)
-    .org()
-    .getKey(getActiveKeyId());
-  const metadata = await key.metadata();
-  appendLogJson('Key Metadata', {
-    keyId: key.id,
-    metadata,
+  appendLog('Session token created.', 'success');
+  appendLogJson('Session Result Metadata', {
+    orgId: sessionResult.orgId,
+    sessionId: sessionResult.sessionId,
+    authTokenExp: sessionResult.authTokenExp,
+    refreshTokenExp: sessionResult.refreshTokenExp,
+    sessionExp: sessionResult.sessionExp,
   });
 };
 
-const setMetadataAction = async (): Promise<void> => {
-  const key = await ensureClientSession(appState)
-    .org()
-    .getKey(getActiveKeyId());
-  const metadataPayload = parseMetadataPayload(dom.metadataPayloadInput.value);
-  await key.setMetadata(metadataPayload);
-  appendLog('Metadata updated.', 'success');
-  await getMetadataAction();
+const prepareFullFlowAction = async (): Promise<void> => {
+  appState.pendingGoogleFlow = 'fullFlow';
+  dom.fullFlowResultOutput.textContent = 'Running...';
+  dom.fullFlowResultOutput.classList.remove('has-content');
+  appendLog('Full flow started. Waiting for Google sign-in callback...');
 };
 
-const clearMetadataAction = async (): Promise<void> => {
-  const key = await ensureClientSession(appState)
-    .org()
-    .getKey(getActiveKeyId());
-  await key.setMetadata(null);
-  appendLog('Metadata cleared.', 'success');
-};
+const handleGoogleLoginFullFlow = async (
+  credentialResponse: GoogleCredentialResponse,
+): Promise<void> => {
+  const idToken = readGoogleIdToken(credentialResponse);
+  const config = readConfigFromDom();
 
-const disableKeyAction = async (): Promise<void> => {
-  const key = await ensureClientSession(appState)
-    .org()
-    .getKey(getActiveKeyId());
-  await key.disable();
-  appendLog(`Key disabled: ${key.id}`, 'success');
-};
+  appendLog(
+    `Google sign-in succeeded. Running full flow for ${config.orgId} on ${CUBESIGNER_ENV_NAME}...`,
+  );
+  try {
+    const identityProof = await createIdentityProofFromOidcToken(
+      idToken,
+      config,
+    );
+    await ensureProviderUserFromIdentityProof(identityProof, {
+      providerToken: idToken,
+      registrationToken: idToken,
+    });
+    const sessionResult = await createSessionFromOidcToken(idToken, config);
 
-const deleteKeyAction = async (): Promise<void> => {
-  const keyId = getActiveKeyId();
-  const key = await ensureClientSession(appState).org().getKey(keyId);
-  const deleteResponse = await key.delete();
-  assertNoMfaRequired('Delete key', deleteResponse);
-
-  appendLog(`Key deleted: ${keyId}`, 'success');
-  if (dom.keyIdInput.value.trim() === keyId) {
-    dom.keyIdInput.value = '';
+    setOutput(
+      dom.fullFlowResultOutput,
+      JSON.stringify(sessionResult, null, 2),
+    );
+    setTabDot('full-flow', true);
+    appState.pendingGoogleFlow = null;
+    appendLog('Full flow completed.', 'success');
+  } catch (error: unknown) {
+    appState.pendingGoogleFlow = null;
+    dom.fullFlowResultOutput.textContent = `Error: ${error instanceof Error ? error.message : String(error)}`;
+    dom.fullFlowResultOutput.classList.remove('has-content');
+    throw error;
   }
-  await listKeysAction();
-};
-
-const importSecretAction = async (): Promise<void> => {
-  const client = ensureClientSession(appState);
-  const keyIdInputElement = dom.keyIdInput;
-  const keyType = parseImportKeyType(dom.importKeyTypeSelect.value);
-  const secretBytes = hexToBytes(dom.importSecretHexInput.value.trim());
-
-  const importer = new KeyImporter(client.org());
-  const importedKeys = await importer.importRawSecretKeys(keyType, [
-    secretBytes,
-  ]);
-
-  const summaries = importedKeys.map((key) => mapKeySummary(key));
-  appendLogJson('Imported Keys', summaries);
-
-  const firstImportedKey = importedKeys[0];
-  if (firstImportedKey) {
-    const importedKeyId = firstImportedKey.id;
-    keyIdInputElement.value = importedKeyId;
-    appendLog(`Imported key selected: ${importedKeyId}`, 'success');
-  }
-
-  await listKeysAction();
-};
-
-const initExportAction = async (): Promise<void> => {
-  const keyId = getActiveKeyId();
-  const response = await ensureClientSession(appState).org().initExport(keyId);
-  const data = assertNoMfaRequired('Init export', response);
-  appendLogJson('Init Export Response', data);
-};
-
-const getExportStatusAction = async (): Promise<void> => {
-  const keyId = getActiveKeyId();
-  const exports = await ensureClientSession(appState)
-    .org()
-    .exports(keyId)
-    .fetch();
-
-  const mapped = exports.map((entry) => ({
-    keyId: entry.key_id,
-    orgId: entry.org_id,
-    validEpoch: entry.valid_epoch,
-    expEpoch: entry.exp_epoch,
-    publicKeyHash: entry.public_key_hash ?? null,
-  }));
-  appendLogJson('Export Status', mapped);
-};
-
-const completeExportAction = async (): Promise<void> => {
-  const keyId = getActiveKeyId();
-  const keyPair = await userExportKeygen();
-  const response = await ensureClientSession(appState)
-    .org()
-    .completeExport(keyId, keyPair.publicKey);
-  const encrypted = assertNoMfaRequired('Complete export', response);
-
-  const decrypted = await userExportDecrypt(keyPair.privateKey, encrypted);
-  appendLogJson('Encrypted Export Payload', truncateLongStrings(encrypted));
-  appendLogJson('Decrypted Export Material', truncateLongStrings(decrypted));
-};
-
-const cancelExportAction = async (): Promise<void> => {
-  const keyId = getActiveKeyId();
-  await ensureClientSession(appState).org().deleteExport(keyId);
-  appendLog(`Cancelled export for key ${keyId}.`, 'success');
 };
 
 export const createActions = (): AppActions => {
   return {
-    handleGoogleLogin,
-    submitManualIdentityProofAction,
-    createManualSessionAction,
-    getCurrentUserAction,
-    listKeysAction,
-    getKeyAction,
-    getMetadataAction,
-    setMetadataAction,
-    clearMetadataAction,
-    disableKeyAction,
-    deleteKeyAction,
-    importSecretAction,
-    initExportAction,
-    getExportStatusAction,
-    completeExportAction,
-    cancelExportAction,
+    handleGoogleLoginManual,
+    handleGoogleLoginFullFlow,
+    prepareFullFlowAction,
+    createIdentityProofStep,
+    createUserStep,
+    createSessionStep,
   };
 };

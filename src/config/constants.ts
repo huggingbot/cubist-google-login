@@ -1,12 +1,6 @@
 import {
-  BabyJubjub,
-  Bls,
-  Ed25519,
   envs,
-  P256,
   Secp256k1,
-  Stark,
-  type KeyType as CubeSignerKeyType,
 } from '@cubist-labs/cubesigner-sdk';
 
 export const DEFAULT_ORG_ID = import.meta.env.VITE_DEFAULT_ORG_ID ?? '';
@@ -19,13 +13,4 @@ export const CUBESIGNER_ENV_NAME = 'gamma';
 export const REGISTRATION_API_PATH = '/recovery/registration/ensure-user';
 export const REGISTRATION_PROVIDER_VERIFIER_ID = 'cubist';
 export const REGISTRATION_API_BASE_URL = 'http://localhost:3000';
-
-export const ALLOWED_IMPORT_KEY_TYPES: CubeSignerKeyType[] = [
-  Secp256k1.Evm,
-  Secp256k1.Btc,
-  Ed25519.Solana,
-  P256.Cosmos,
-  Bls.Eth2Inactive,
-  Stark,
-  BabyJubjub,
-];
+export const DEFAULT_PROVIDER_KEY_TYPE = Secp256k1.Evm;

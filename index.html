@@ -13,45 +13,86 @@
       }
 
       body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+          sans-serif;
         margin: 0;
-        padding: 2rem;
+        padding: 1.5rem 2rem;
         background: #f5f5f5;
         color: #1a1a1a;
+        max-width: 960px;
+        margin-left: auto;
+        margin-right: auto;
       }
 
       h1 {
-        font-size: 1.5rem;
-        margin: 0 0 0.5rem;
+        font-size: 1.25rem;
+        margin: 0 0 0.15rem;
       }
 
       .subtitle {
-        color: #666;
-        font-size: 0.875rem;
-        margin: 0 0 2rem;
+        color: #888;
+        font-size: 0.8rem;
+        margin: 0 0 1rem;
       }
 
-      .card {
+      /* ── Collapsible config ── */
+
+      .config-toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
         background: #fff;
         border: 1px solid #e0e0e0;
-        border-radius: 8px;
-        padding: 1.25rem;
-        margin-bottom: 1rem;
-      }
-
-      .card h2 {
-        font-size: 0.875rem;
+        border-radius: 8px 8px 0 0;
+        padding: 0.6rem 1rem;
+        margin-bottom: 0;
+        cursor: pointer;
+        font-size: 0.75rem;
+        font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.05em;
         color: #666;
-        margin: 0 0 1rem;
+        width: 100%;
+        text-align: left;
+      }
+
+      .config-toggle:hover {
+        background: #fafafa;
+      }
+
+      .config-toggle .chevron {
+        transition: transform 0.15s ease;
+        font-size: 0.65rem;
+      }
+
+      .config-toggle.collapsed .chevron {
+        transform: rotate(-90deg);
+      }
+
+      .config-toggle.collapsed {
+        border-radius: 8px;
+        margin-bottom: 1rem;
+      }
+
+      .config-body {
+        background: #fff;
+        border: 1px solid #e0e0e0;
+        border-top: none;
+        border-radius: 0 0 8px 8px;
+        padding: 0.75rem 1rem 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .config-body.hidden {
+        display: none;
       }
 
       .form-row {
         display: flex;
-        gap: 1rem;
+        gap: 0.75rem;
         flex-wrap: wrap;
-        margin-bottom: 0.75rem;
+        margin-bottom: 0.5rem;
       }
 
       .form-row:last-child {
@@ -61,59 +102,62 @@
       .form-group {
         display: flex;
         flex-direction: column;
-        gap: 0.25rem;
+        gap: 0.2rem;
         flex: 1;
-        min-width: 200px;
+        min-width: 180px;
       }
 
       .form-group label {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         font-weight: 600;
-        color: #555;
+        color: #888;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
       }
 
       .form-group input,
-      .form-group select {
-        padding: 0.5rem 0.75rem;
+      .form-group textarea {
+        padding: 0.45rem 0.65rem;
         border: 1px solid #d0d0d0;
         border-radius: 4px;
-        font-size: 0.875rem;
+        font-size: 0.8rem;
         font-family: inherit;
       }
 
       .form-group textarea {
-        min-height: 84px;
-        padding: 0.5rem 0.75rem;
-        border: 1px solid #d0d0d0;
-        border-radius: 4px;
-        font-size: 0.875rem;
         font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace;
+        font-size: 0.75rem;
+        min-height: 72px;
         resize: vertical;
+        white-space: pre-wrap;
+        word-break: break-all;
+      }
+
+      .form-group input[readonly] {
+        background: #f0f0f0;
+        color: #888;
+        cursor: not-allowed;
       }
 
       .form-group input:focus,
-      .form-group select:focus,
       .form-group textarea:focus {
         outline: none;
         border-color: #4285f4;
-        box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.15);
+        box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.12);
       }
 
-      .button-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-      }
+      /* ── Buttons ── */
 
       button {
         border: 1px solid #d0d0d0;
         background: #fff;
         color: #1a1a1a;
         border-radius: 6px;
-        font-size: 0.8125rem;
+        font-size: 0.8rem;
         line-height: 1;
-        padding: 0.6rem 0.8rem;
+        padding: 0.55rem 0.75rem;
         cursor: pointer;
+        font-weight: 500;
       }
 
       button:hover {
@@ -125,53 +169,226 @@
         cursor: not-allowed;
       }
 
-      button.danger {
-        border-color: #f2b8b5;
-        color: #a61b15;
+      button.primary {
+        border-color: #3773d6;
+        background: #4285f4;
+        color: #fff;
+        font-weight: 600;
       }
 
-      #session-status {
-        font-size: 0.8125rem;
-        line-height: 1.5;
-        color: #444;
-      }
-
-      #keys-output {
-        margin-top: 0.75rem;
-        padding: 0.75rem;
-        border-radius: 6px;
-        background: #fafafa;
-        border: 1px solid #efefef;
-        max-height: 240px;
-        overflow: auto;
-        font-size: 0.75rem;
-        font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace;
-        white-space: pre-wrap;
-        word-break: break-word;
+      button.primary:hover:not(:disabled) {
+        background: #3773d6;
       }
 
       #google-signin-btn {
         min-height: 44px;
       }
 
+      /* ── Tabs ── */
+
+      .tab-bar {
+        display: flex;
+        gap: 0;
+        border-bottom: 2px solid #e0e0e0;
+        margin-bottom: 0;
+        overflow-x: auto;
+      }
+
+      .tab-btn {
+        position: relative;
+        padding: 0.55rem 0.9rem;
+        border: none;
+        border-bottom: 2px solid transparent;
+        background: none;
+        color: #888;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+        margin-bottom: -2px;
+        border-radius: 0;
+        transition: color 0.12s, border-color 0.12s;
+      }
+
+      .tab-btn:hover {
+        color: #444;
+        background: rgba(0, 0, 0, 0.02);
+      }
+
+      .tab-btn.active {
+        color: #4285f4;
+        border-bottom-color: #4285f4;
+      }
+
+      .tab-btn .tab-dot {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #34a853;
+        margin-left: 5px;
+        vertical-align: middle;
+        opacity: 0;
+        transition: opacity 0.15s ease;
+      }
+
+      .tab-btn .tab-dot.done {
+        opacity: 1;
+      }
+
+      /* ── Tab panels ── */
+
+      .tab-panel {
+        display: none;
+      }
+
+      .tab-panel.active {
+        display: block;
+      }
+
+      .step-card {
+        background: #fff;
+        border: 1px solid #e0e0e0;
+        border-top: none;
+        border-radius: 0 0 8px 8px;
+        padding: 1rem 1.25rem 1.25rem;
+      }
+
+      .step-header {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #333;
+        margin: 0 0 0.35rem;
+      }
+
+      .step-description {
+        margin: 0 0 0.75rem;
+        font-size: 0.8rem;
+        color: #777;
+        line-height: 1.45;
+      }
+
+      /* ── Output ── */
+
+      .output-block {
+        margin-top: 0.75rem;
+        border: 1px dashed #d8d8d8;
+        border-radius: 6px;
+        background: #fafbfc;
+        padding: 0.5rem 0.6rem;
+      }
+
+      .output-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.3rem;
+      }
+
+      .output-title {
+        font-size: 0.65rem;
+        font-weight: 700;
+        color: #999;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .copy-btn {
+        font-size: 0.65rem;
+        padding: 0.15rem 0.4rem;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        background: #fff;
+        color: #888;
+        cursor: pointer;
+        line-height: 1.2;
+      }
+
+      .copy-btn:hover {
+        background: #f5f5f5;
+        color: #555;
+      }
+
+      .output-value {
+        margin: 0;
+        max-height: 260px;
+        overflow: auto;
+        font-size: 0.72rem;
+        font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace;
+        white-space: pre-wrap;
+        word-break: break-word;
+        color: #555;
+      }
+
+      .output-value.has-content {
+        color: #1a1a1a;
+      }
+
+      .button-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+      }
+
+      /* ── Log ── */
+
+      .log-card {
+        background: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        margin-top: 1rem;
+      }
+
+      .log-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.5rem 1rem;
+        border-bottom: 1px solid #f0f0f0;
+      }
+
+      .log-header h2 {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #666;
+        margin: 0;
+      }
+
+      .log-clear-btn {
+        font-size: 0.65rem;
+        padding: 0.2rem 0.5rem;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        background: #fff;
+        color: #888;
+        cursor: pointer;
+      }
+
+      .log-clear-btn:hover {
+        background: #f5f5f5;
+        color: #555;
+      }
+
       #log {
         font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace;
-        font-size: 0.8125rem;
+        font-size: 0.75rem;
         line-height: 1.5;
-        max-height: 500px;
+        max-height: 300px;
         overflow-y: auto;
-        padding: 0;
+        padding: 0.5rem 1rem;
       }
 
       #log:empty::after {
-        content: "Waiting for Google Sign-In...";
-        color: #999;
+        content: "No log entries yet.";
+        color: #bbb;
         font-style: italic;
       }
 
       .log-entry {
-        padding: 0.25rem 0;
-        border-bottom: 1px solid #f0f0f0;
+        padding: 0.2rem 0;
+        border-bottom: 1px solid #f5f5f5;
         word-break: break-all;
       }
 
@@ -179,30 +396,19 @@
         border-bottom: none;
       }
 
-      .log-info {
-        color: #555;
-      }
-
-      .log-success {
-        color: #1b7a2b;
-      }
-
-      .log-error {
-        color: #c0392b;
-      }
-
-      .log-json {
-        color: #333;
-      }
+      .log-info { color: #777; }
+      .log-success { color: #1b7a2b; }
+      .log-error { color: #c0392b; }
+      .log-json { color: #333; }
 
       .log-label {
         font-weight: 600;
-        margin-bottom: 0.25rem;
+        margin-bottom: 0.2rem;
       }
 
       .log-json pre {
         margin: 0;
-        padding: 0.5rem;
+        padding: 0.4rem;
         background: #f8f9fa;
         border-radius: 4px;
         overflow-x: auto;
@@ -213,12 +419,13 @@
   </head>
   <body>
     <h1>CubeSigner Google Login Test</h1>
-    <p class="subtitle">
-      Verify Google OIDC -&gt; identity proof -&gt; registration service -&gt; CubeSigner session exchange
-    </p>
+    <p class="subtitle">Each tab is independent. Outputs auto-fill the next step's input, or paste manually.</p>
 
-    <div class="card">
-      <h2>Configuration</h2>
+    <!-- Collapsible config -->
+    <button class="config-toggle" id="config-toggle">
+      <span class="chevron">&#9660;</span> Configuration
+    </button>
+    <div class="config-body" id="config-body">
       <div class="form-row">
         <div class="form-group">
           <label for="orgId">CubeSigner Org ID</label>
@@ -226,7 +433,7 @@
         </div>
         <div class="form-group">
           <label>Environment</label>
-          <input type="text" value="gamma (fixed)" readonly />
+          <input type="text" value="gamma" readonly />
         </div>
       </div>
       <div class="form-row">
@@ -241,119 +448,123 @@
       </div>
     </div>
 
-    <div class="card">
-      <h2>Google Sign-In</h2>
-      <div id="google-signin-btn"></div>
+    <!-- Tab navigation -->
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="tab-google-login">1. Google Login <span class="tab-dot" data-dot="google-login"></span></button>
+      <button class="tab-btn" data-tab="tab-identity-proof">2. Identity Proof <span class="tab-dot" data-dot="identity-proof"></span></button>
+      <button class="tab-btn" data-tab="tab-create-user">3. Create User <span class="tab-dot" data-dot="create-user"></span></button>
+      <button class="tab-btn" data-tab="tab-session-token">4. Session Token <span class="tab-dot" data-dot="session-token"></span></button>
+      <button class="tab-btn" data-tab="tab-full-flow">Full Flow <span class="tab-dot" data-dot="full-flow"></span></button>
     </div>
 
-    <div class="card">
-      <h2>Manual Identity Proof</h2>
-      <p style="margin: 0 0 0.5rem; font-size: 0.85rem; opacity: 0.7;">
-        Paste an identity proof JSON to provision/create the user in registration service.
-      </p>
-      <div class="form-row">
-        <div class="form-group" style="flex: 1;">
-          <label for="manualIdentityProof">Identity Proof (JSON)</label>
-          <textarea id="manualIdentityProof" rows="6" placeholder='{"identity":{"iss":"https://accounts.google.com","sub":"..."}}' spellcheck="false" style="font-family: monospace; font-size: 0.8rem;"></textarea>
+    <!-- Tab 1: Google Login -->
+    <div id="tab-google-login" class="tab-panel active">
+      <div class="step-card">
+        <div class="step-header">Sign in with Google</div>
+        <p class="step-description">Click the button below. The raw ID token will appear in the output and auto-fill Steps 2 &amp; 4.</p>
+        <div id="google-signin-btn"></div>
+        <div class="output-block">
+          <div class="output-header">
+            <span class="output-title">Google ID Token</span>
+            <button class="copy-btn" data-copy="output-id-token">Copy</button>
+          </div>
+          <pre id="output-id-token" class="output-value">Waiting for sign-in...</pre>
         </div>
       </div>
-      <div class="button-row">
-        <button id="action-manual-identity-proof-submit">Provision User</button>
-      </div>
     </div>
 
-    <div class="card">
-      <h2>Manual Session Exchange</h2>
-      <p style="margin: 0 0 0.5rem; font-size: 0.85rem; opacity: 0.7;">
-        Paste Google OIDC token to exchange for CubeSigner session via MFA SDK.
-      </p>
-      <div class="form-row">
-        <div class="form-group" style="flex: 1;">
-          <label for="manualSessionToken">OIDC Token</label>
-          <textarea id="manualSessionToken" rows="3" placeholder="eyJhbGciOi..." spellcheck="false" style="font-family: monospace; font-size: 0.8rem;"></textarea>
-        </div>
-      </div>
-      <div class="button-row">
-        <button id="action-manual-session-create">Create Session</button>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>Session State</h2>
-      <div id="session-status">Not authenticated.</div>
-      <div class="button-row" style="margin-top: 0.75rem">
-        <button id="action-get-user">Get Current User</button>
-        <button id="action-list-keys">List Accessible Keys / Shares</button>
-      </div>
-      <pre id="keys-output"></pre>
-    </div>
-
-    <div class="card">
-      <h2>Key / Share Controls</h2>
-      <div class="form-row">
+    <!-- Tab 2: Identity Proof -->
+    <div id="tab-identity-proof" class="tab-panel">
+      <div class="step-card">
+        <div class="step-header">Exchange ID Token for Identity Proof</div>
+        <p class="step-description">Paste a Google ID token below (auto-filled from Step 1) and click the button.</p>
         <div class="form-group">
-          <label for="keyId">Active Key ID</label>
-          <input type="text" id="keyId" placeholder="Key#..." spellcheck="false" />
+          <label for="input-id-token-for-proof">Google ID Token</label>
+          <textarea id="input-id-token-for-proof" rows="2" placeholder="eyJhbGci..." spellcheck="false"></textarea>
         </div>
-      </div>
-      <div class="button-row">
-        <button id="action-get-key">Get Key Details</button>
-        <button id="action-get-metadata">Get Metadata</button>
-        <button id="action-disable-key" class="danger">Disable Key</button>
-        <button id="action-delete-key" class="danger">Delete Key</button>
+        <div class="button-row">
+          <button id="action-create-identity-proof" class="primary">Create Identity Proof</button>
+        </div>
+        <div class="output-block">
+          <div class="output-header">
+            <span class="output-title">Identity Proof</span>
+            <button class="copy-btn" data-copy="output-identity-proof">Copy</button>
+          </div>
+          <pre id="output-identity-proof" class="output-value">No output yet.</pre>
+        </div>
       </div>
     </div>
 
-    <div class="card">
-      <h2>Metadata Operations</h2>
-      <div class="form-row">
+    <!-- Tab 3: Create User -->
+    <div id="tab-create-user" class="tab-panel">
+      <div class="step-card">
+        <div class="step-header">Send Proof to Create User</div>
+        <p class="step-description">Paste identity proof JSON below (auto-filled from Step 2) and click the button.</p>
         <div class="form-group">
-          <label for="metadataPayload">Metadata Payload (JSON or plain string)</label>
-          <textarea id="metadataPayload" spellcheck="false" placeholder='{"recoveryCommitment":"..."}'></textarea>
+          <label for="input-identity-proof-for-user">Identity Proof (JSON)</label>
+          <textarea id="input-identity-proof-for-user" rows="4" placeholder='{"identity_proof": ...}' spellcheck="false"></textarea>
         </div>
-      </div>
-      <div class="button-row">
-        <button id="action-set-metadata">Set Metadata</button>
-        <button id="action-clear-metadata">Clear Metadata</button>
+        <div class="button-row">
+          <button id="action-create-user" class="primary">Create User</button>
+        </div>
+        <div class="output-block">
+          <div class="output-header">
+            <span class="output-title">User Creation Result</span>
+            <button class="copy-btn" data-copy="output-user-result">Copy</button>
+          </div>
+          <pre id="output-user-result" class="output-value">No output yet.</pre>
+        </div>
       </div>
     </div>
 
-    <div class="card">
-      <h2>Import Raw Share</h2>
-      <div class="form-row">
+    <!-- Tab 4: Session Token -->
+    <div id="tab-session-token" class="tab-panel">
+      <div class="step-card">
+        <div class="step-header">Exchange ID Token for Session Token</div>
+        <p class="step-description">Paste a Google ID token below (auto-filled from Step 1) and click the button.</p>
         <div class="form-group">
-          <label for="importKeyType">Key Type</label>
-          <select id="importKeyType">
-            <option value="SecpEthAddr" selected>SecpEthAddr</option>
-            <option value="SecpBtc">SecpBtc</option>
-            <option value="Ed25519SolanaAddr">Ed25519SolanaAddr</option>
-            <option value="P256CosmosAddr">P256CosmosAddr</option>
-            <option value="Stark">Stark</option>
-            <option value="BabyJubjub">BabyJubjub</option>
-          </select>
+          <label for="input-id-token-for-session">Google ID Token</label>
+          <textarea id="input-id-token-for-session" rows="2" placeholder="eyJhbGci..." spellcheck="false"></textarea>
         </div>
-        <div class="form-group">
-          <label for="importSecretHex">Raw Secret (hex)</label>
-          <input type="text" id="importSecretHex" placeholder="0x..." spellcheck="false" />
+        <div class="button-row">
+          <button id="action-create-session" class="primary">Create Session Token</button>
         </div>
-      </div>
-      <div class="button-row">
-        <button id="action-import-secret">Import Raw Secret</button>
+        <div class="output-block">
+          <div class="output-header">
+            <span class="output-title">Session Token</span>
+            <button class="copy-btn" data-copy="output-session-token">Copy</button>
+          </div>
+          <pre id="output-session-token" class="output-value">No output yet.</pre>
+        </div>
       </div>
     </div>
 
-    <div class="card">
-      <h2>Export Operations</h2>
-      <div class="button-row">
-        <button id="action-init-export">Init Export</button>
-        <button id="action-get-export-status">Get Export Status</button>
-        <button id="action-complete-export">Complete Export + Decrypt</button>
-        <button id="action-cancel-export" class="danger">Cancel Export</button>
+    <!-- Tab 5: Full Flow -->
+    <div id="tab-full-flow" class="tab-panel">
+      <div class="step-card">
+        <div class="step-header">One-Click Full Flow</div>
+        <p class="step-description">
+          Triggers a fresh Google login, then automatically creates identity proof, provisions the user, and exchanges for a session token.
+        </p>
+        <div class="button-row">
+          <button id="action-run-full-flow" class="primary">Run Full Flow</button>
+        </div>
+        <div class="output-block">
+          <div class="output-header">
+            <span class="output-title">Session Token (Full Flow)</span>
+            <button class="copy-btn" data-copy="output-full-flow-result">Copy</button>
+          </div>
+          <pre id="output-full-flow-result" class="output-value">No output yet.</pre>
+        </div>
       </div>
     </div>
 
-    <div class="card">
-      <h2>Output</h2>
+    <!-- Log -->
+    <div class="log-card">
+      <div class="log-header">
+        <h2>Log</h2>
+        <button class="log-clear-btn" id="log-clear-btn">Clear</button>
+      </div>
       <div id="log"></div>
     </div>
 

@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "@cubist-labs/cubesigner-sdk": "^0.4.217",
-    "@cubist-labs/cubesigner-sdk-key-import": "^0.4.217",
     "@hpke/common": "^1.8.1",
     "@hpke/core": "^1.7.5",
     "@metamask/mfa-wallet-e2ee": "file:.local-tarballs/metamask-mfa-wallet-e2ee-0.0.0.tgz",
